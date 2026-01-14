@@ -15,6 +15,23 @@ export async function createInvite(formData: FormData) {
   const eventDate = new Date(formData.get("eventDate") as string);
   const circleId = formData.get("circleId") as string;
 
+  // If circleId is "undefined" string or empty, treat as null
+  const finalCircleId =
+    circleId && circleId !== "undefined" && circleId.trim() !== ""
+      ? circleId
+      : null;
+
+  if (finalCircleId) {
+    const circle = await prisma.circle.findUnique({
+      where: { id: finalCircleId },
+    });
+    if (!circle || circle.ownerId !== session.user.id) {
+      throw new Error(
+        "Unauthorized: You can only create events for circles you own.",
+      );
+    }
+  }
+
   const invite = await prisma.invite.create({
     data: {
       title,
@@ -22,11 +39,14 @@ export async function createInvite(formData: FormData) {
       location,
       eventDate,
       senderId: session.user.id,
-      circleId: circleId || null,
+      circleId: finalCircleId,
     },
   });
 
   revalidatePath("/");
+  if (circleId) {
+    revalidatePath(`/circle/${circleId}`);
+  }
   return invite;
 }
 
@@ -89,4 +109,30 @@ export async function submitRSVP(
 
   revalidatePath(`/event/${inviteId}`);
   return rsvp;
+}
+
+export async function deleteInvite(inviteId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const invite = await prisma.invite.findUnique({
+    where: { id: inviteId },
+  });
+
+  if (!invite) throw new Error("Invite not found");
+
+  if (invite.senderId !== session.user.id) {
+    throw new Error("Unauthorized: Only the host can delete this event");
+  }
+
+  await prisma.invite.delete({
+    where: { id: inviteId },
+  });
+
+  // Revalidate circle page if it belongs to one
+  if (invite.circleId) {
+    revalidatePath(`/circle/${invite.circleId}`);
+  }
+  revalidatePath("/");
+  return { success: true, circleId: invite.circleId };
 }

@@ -4,10 +4,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Github } from "lucide-react"
 import { redirect } from "next/navigation"
 
-export default async function SignInPage() {
-  const session = await auth()
+export default async function SignInPage(props: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const callbackUrl = searchParams?.callbackUrl || "/";
+
+  const session = await auth();
   if (session) {
-    redirect("/")
+    redirect(callbackUrl);
   }
 
   return (
@@ -31,7 +36,7 @@ export default async function SignInPage() {
               <form
                 action={async () => {
                   "use server"
-                  await signIn("google")
+                  await signIn("google", { redirectTo: callbackUrl })
                 }}
               >
                 <Button 
@@ -63,7 +68,7 @@ export default async function SignInPage() {
               <form
                 action={async () => {
                   "use server"
-                  await signIn("github")
+                  await signIn("github", { redirectTo: callbackUrl })
                 }}
               >
                 <Button 

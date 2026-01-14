@@ -2,18 +2,14 @@ import { auth } from "@/auth";
 import { getCircle } from "@/app/actions/circles";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Calendar,
-  Users,
-  ArrowLeft,
-  Settings,
-  MoreHorizontal,
-  Plus,
-} from "lucide-react";
+import { Calendar, Users, ArrowLeft, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { EmptyState } from "@/components/ui/empty-state";
 import Image from "next/image";
+import { InviteMemberDialog } from "@/components/circle/InviteMemberDialog";
+import { CircleSettingsMenu } from "@/components/circle/CircleSettingsMenu";
+import { CreateInviteDialog } from "@/components/invites/create-invite-dialog";
 
 interface CirclePageProps {
   params: Promise<{ id: string }>;
@@ -28,7 +24,8 @@ export default async function CirclePage({ params }: CirclePageProps) {
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <h1 className="text-4xl font-bold mb-4">Circle Not Found</h1>
         <p className="text-muted-foreground mb-8">
-          This circle doesn&#39;t exist or you don&#39;t have permission to view it.
+          This circle doesn&#39;t exist or you don&#39;t have permission to view
+          it.
         </p>
         <Link href="/">
           <Button className="rounded-full">Return Home</Button>
@@ -57,13 +54,10 @@ export default async function CirclePage({ params }: CirclePageProps) {
           </Link>
           <div className="flex gap-2">
             {isOwner && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full border border-white/5 glass"
-              >
-                <Settings className="w-5 h-5" />
-              </Button>
+              <CircleSettingsMenu
+                circleId={circle.id}
+                circleName={circle.name}
+              />
             )}
           </div>
         </nav>
@@ -93,11 +87,28 @@ export default async function CirclePage({ params }: CirclePageProps) {
           </div>
 
           <div className="flex gap-3">
-            {/* Placeholder for Add Member Dialog */}
-            <Button className="rounded-full h-12 px-6 font-bold shadow-lg shadow-primary/25">
-              <Plus className="w-4 h-4 mr-2" />
-              Invite Members
-            </Button>
+            {isOwner && (
+              <CreateInviteDialog
+                circles={[{ id: circle.id, name: circle.name }]}
+                defaultCircleId={circle.id}
+              >
+                <Button className="rounded-full h-12 px-6 font-bold shadow-lg shadow-primary/25">
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Invite
+                </Button>
+              </CreateInviteDialog>
+            )}
+
+            <InviteMemberDialog
+              circleId={circle.id}
+              inviteCode={circle.inviteCode}
+              isOwner={isOwner}
+            >
+              <Button className="rounded-full h-12 px-6 font-bold shadow-lg shadow-primary/25">
+                <Plus className="w-4 h-4 mr-2" />
+                Invite Members
+              </Button>
+            </InviteMemberDialog>
           </div>
         </section>
 
@@ -137,7 +148,7 @@ export default async function CirclePage({ params }: CirclePageProps) {
                         {member.role}
                       </p>
                     </div>
-                    {isOwner && member.userId !== session.user.id && (
+                    {isOwner && member.userId !== session?.user?.id && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -162,12 +173,21 @@ export default async function CirclePage({ params }: CirclePageProps) {
             </div>
 
             {circle.invites.length === 0 ? (
-              <EmptyState
-                icon={Calendar}
-                title="No events yet"
-                description="Start planning your first gathering for this circle!"
-                // We can add a create invite button here pre-filled with this circle
-              />
+              <div className="flex flex-col items-center">
+                <EmptyState
+                  icon={Calendar}
+                  title="No events yet"
+                  description="Start planning your first gathering for this circle!"
+                />
+                {isOwner && (
+                  <div className="mt-6">
+                    <CreateInviteDialog
+                      circles={[{ id: circle.id, name: circle.name }]}
+                      defaultCircleId={circle.id}
+                    />
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="grid gap-4">
                 {circle.invites.map((invite) => (

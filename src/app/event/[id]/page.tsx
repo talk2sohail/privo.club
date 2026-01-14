@@ -20,6 +20,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { RsvpButtons } from "@/components/events/rsvp-buttons";
 import { PostUpdateDialog } from "@/components/events/post-update-dialog";
+import { EventSettingsMenu } from "@/components/events/EventSettingsMenu";
 
 interface EventPageProps {
   params: Promise<{ id: string }>;
@@ -71,6 +72,9 @@ export default async function EventPage({ params }: EventPageProps) {
             >
               <Share2 className="w-5 h-5" />
             </Button>
+            {isOwner && (
+                <EventSettingsMenu inviteId={invite.id} inviteTitle={invite.title} />
+            )}
           </div>
         </nav>
 

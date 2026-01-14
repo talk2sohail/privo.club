@@ -41,6 +41,8 @@ export default async function Home() {
     (i) => new Date(i.eventDate) > new Date(),
   );
 
+  const ownedCircles = circles.filter((c) => c.ownerId === session.user.id);
+
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Background radial gradients */}
@@ -112,7 +114,7 @@ export default async function Home() {
               lasting memories without the chaos.
             </p>
             <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
-              <CreateInviteDialog circles={circles} />
+              <CreateInviteDialog circles={ownedCircles} />
               <CreateCircleDialog />
             </div>
           </div>
@@ -176,12 +178,25 @@ export default async function Home() {
                   >
                     <div className="glass p-5 rounded-3xl border-white/5 hover:border-primary/20 hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between group">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary/20 to-purple-500/20 flex items-center justify-center text-xl font-bold text-primary">
+                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary/20 to-purple-500/20 flex items-center justify-center text-xl font-bold text-primary relative">
                           {circle.name.charAt(0)}
+                          {circle.ownerId === session.user.id && (
+                            <div
+                              className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border border-background flex items-center justify-center shadow-xs"
+                              title="Owner"
+                            >
+                              <Sparkles className="w-2 h-2 text-black fill-black" />
+                            </div>
+                          )}
                         </div>
                         <div>
-                          <h4 className="font-bold text-lg group-hover:text-primary transition-colors">
+                          <h4 className="font-bold text-lg group-hover:text-primary transition-colors flex items-center gap-2">
                             {circle.name}
+                            {circle.ownerId === session.user.id && (
+                              <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold">
+                                OWNER
+                              </span>
+                            )}
                           </h4>
                           <p className="text-sm text-muted-foreground">
                             {circle._count.members} Members
@@ -225,7 +240,9 @@ export default async function Home() {
                   icon={Calendar}
                   title="No upcoming events"
                   description="You have no upcoming events. Plan something fun!"
-                  actionComponent={<CreateInviteDialog circles={circles} />}
+                  actionComponent={
+                    <CreateInviteDialog circles={ownedCircles} />
+                  }
                 />
               ) : (
                 invites.map((invite) => (
