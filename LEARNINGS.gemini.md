@@ -23,3 +23,5 @@
 - Added a `sw.ts` file for Service Worker configuration (precaching + runtime caching).
 - Updated `ts.config.json` to include `webworker` lib and Serwist types.
 - **Fix**: Resolved `[auth][error] UntrustedHost` by adding `AUTH_TRUST_HOST=true` to `.env` when running `npm start` locally.
+- **Optimization**: Replaced default caching with a custom `NetworkFirst` (3s timeout) strategy to minimize "white screen" wait times.
+- **Troubleshooting**: Noted that Chrome locally can aggressively cache old PWA versions (manifest/icons). Fix involves unregistering the SW in DevTools or using "Update on reload".

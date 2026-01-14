@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "The modern way to invite and celebrate with your close ones.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
+    background_color: "#09090b",
     theme_color: "#7c3aed",
     icons: [
       {
