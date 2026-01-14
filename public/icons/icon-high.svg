@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="url(#grad1)" />
+  <!-- Abstract heart shape formed by two connecting curves/figures -->
+  <path d="M256 392C256 392 128 296 128 192C128 144 160 112 208 112C232 112 248 128 256 144C264 128 280 112 304 112C352 112 384 144 384 192C384 296 256 392 256 392Z" fill="white"/>
+  <!-- Inner "open door" / invitation slit -->
+  <path d="M256 160V224" stroke="#8b5cf6" stroke-width="24" stroke-linecap="round"/>
+</svg>

@@ -14,3 +14,12 @@
 - Discovered that NextAuth v5 defaults to `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` for environment variables.
 - Updated the custom sign-in page (`src/app/auth/signin/page.tsx`) with a Google brand-consistent SVG and button.
 - Resolved `invalid_client` error by aligning environment variable naming in the deployment environment (Coolify).
+
+## 2026-01-14
+### Progressive Web App (PWA) Implementation
+- Converted the app to a PWA using `@serwist/next` and `@serwist/sw`.
+- **Constraint**: `@serwist/next` currently blocks Turbopack (`next dev --turbopack`). Updated `package.json` build script to `next build --webpack` to ensure successful builds.
+- Added a `manifest.ts` file for dynamic web manifest generation.
+- Added a `sw.ts` file for Service Worker configuration (precaching + runtime caching).
+- Updated `ts.config.json` to include `webworker` lib and Serwist types.
+- **Fix**: Resolved `[auth][error] UntrustedHost` by adding `AUTH_TRUST_HOST=true` to `.env` when running `npm start` locally.
