@@ -18,8 +18,8 @@ export default async function SignInPage(props: {
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       {/* Dynamic Background Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[120px] rounded-full animate-pulse delay-700" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full motion-safe:animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[120px] rounded-full motion-safe:animate-pulse delay-700" />
       
       <Card className="w-full max-w-md glass border-white/20 relative z-10 backdrop-blur-2xl bg-white/5 dark:bg-black/40">
         <CardHeader className="text-center space-y-2">
@@ -43,7 +43,7 @@ export default async function SignInPage(props: {
                   variant="outline" 
                   className="w-full h-12 text-lg font-medium border-white/20 hover:bg-white/10 transition-all duration-300 gap-3"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                       fill="#4285F4"
@@ -75,7 +75,7 @@ export default async function SignInPage(props: {
                   variant="outline" 
                   className="w-full h-12 text-lg font-medium border-white/20 hover:bg-white/10 transition-all duration-300 gap-3"
                 >
-                  <Github className="w-5 h-5" />
+                  <Github className="w-5 h-5" aria-hidden="true" />
                   Continue with GitHub
                 </Button>
               </form>

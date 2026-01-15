@@ -9,6 +9,7 @@ import { getMyInvites } from "@/app/actions/invites-fetch";
 import { EmptyState } from "@/components/ui/empty-state";
 import { InviteWithRelations, CircleWithRelations } from "@/types";
 import Image from "next/image";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 
 export default async function Home() {
   const [session, circlesData, invitesData] = await Promise.all([
@@ -82,21 +83,13 @@ export default async function Home() {
                 </div>
               )}
             </div>
-            <form
-              action={async () => {
+            <SignOutButton
+              signOutAction={async () => {
                 "use server";
                 const { signOut } = await import("@/auth");
-                await signOut();
+                await signOut({ redirectTo: "/" });
               }}
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                className="ml-2 rounded-full border-white/10 hover:bg-white/5"
-              >
-                Sign Out
-              </Button>
-            </form>
+            />
           </div>
         </header>
 
@@ -104,9 +97,8 @@ export default async function Home() {
         <section className="mb-20 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-8 animate-fade-in-up delay-100">
           <div>
             <h2 className="text-5xl sm:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
-              <span className="bg-linear-to-r from-foreground to-foreground/50 bg-clip-text text-transparent">
-                Celebrate moments
-                <br className="hidden sm:block" /> that matter.
+              <span className="bg-linear-to-r from-foreground to-foreground/50 bg-clip-text text-transparent text-balance block">
+                Celebrate moments that matter.
               </span>
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-lg">
@@ -176,7 +168,7 @@ export default async function Home() {
                     href={`/circle/${circle.id}`}
                     className="block"
                   >
-                    <div className="glass p-5 rounded-3xl border-white/5 hover:border-primary/20 hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between group">
+                    <div className="glass p-5 rounded-3xl border-white/5 hover:border-primary/20 hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between group focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary/20 to-purple-500/20 flex items-center justify-center text-xl font-bold text-primary relative">
                           {circle.name.charAt(0)}
@@ -251,7 +243,7 @@ export default async function Home() {
                     href={`/event/${invite.id}`}
                     className="block"
                   >
-                    <div className="glass p-5 rounded-3xl border-white/5 hover:border-blue-500/30 hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between group">
+                    <div className="glass p-5 rounded-3xl border-white/5 hover:border-blue-500/30 hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between group focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-2xl">
                           {invite.title.toLowerCase().includes("birthday")
