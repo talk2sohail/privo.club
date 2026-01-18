@@ -76,7 +76,7 @@ export function InvitesList({
                 <div className="hidden sm:flex items-center gap-4">
                   <div className="flex -space-x-2">
                     <div className="w-7 h-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[9px] font-bold">
-                      {invite._count.rsvps}
+                      {invite._count?.rsvps || 0}
                     </div>
                   </div>
                 </div>

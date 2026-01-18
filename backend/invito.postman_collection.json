@@ -1,0 +1,353 @@
+{
+	"info": {
+		"_postman_id": "invito-backend-api",
+		"name": "Invito Backend API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "dev-token",
+			"type": "string",
+			"description": "Bearer token for authentication. Use 'dev-token' for local dev mock."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Circles",
+			"item": [
+				{
+					"name": "Create Circle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"My New Circle\",\n    \"description\": \"A test circle created via API\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/circles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Circles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/circles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Circle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/circles/{{circleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles",
+								"{{circleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Regenerate Invite Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/circles/{{circleId}}/regenerate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles",
+								"{{circleId}}",
+								"regenerate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Circle By Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"<invite_code>\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/circles/join",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Circle",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/circles/{{circleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"circles",
+								"{{circleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Invites",
+			"item": [
+				{
+					"name": "Create Invite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Dinner Party\",\n    \"description\": \"Come for food\",\n    \"eventDate\": \"2024-12-31T20:00:00Z\",\n    \"location\": \"My House\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/invites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Invites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/invites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Invite",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/invites/{{inviteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invites",
+								"{{inviteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RSVP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"YES\",\n    \"guestCount\": 1,\n    \"note\": \"Looking forward to it!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/invites/{{inviteId}}/rsvp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invites",
+								"{{inviteId}}",
+								"rsvp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Invite",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/invites/{{inviteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invites",
+								"{{inviteId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Feed",
+			"item": [
+				{
+					"name": "Get Feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/feed/{{inviteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"feed",
+								"{{inviteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"inviteId\": \"{{inviteId}}\",\n    \"content\": \"Hello everyone!\",\n    \"type\": \"CHAT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/feed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"feed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/ping",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

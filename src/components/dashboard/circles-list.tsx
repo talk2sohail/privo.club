@@ -65,7 +65,7 @@ export function CirclesList({ circlesPromise, userId }: CirclesListProps) {
                       )}
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      {circle._count.members} Members
+                      {circle.members?.length || 0} Members
                     </p>
                   </div>
                 </div>

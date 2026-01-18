@@ -219,7 +219,7 @@ export default async function CirclePage({ params }: CirclePageProps) {
                       <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
                           <span className="text-xs font-bold bg-white/10 px-2 py-1 rounded-full">
-                            {invite._count.rsvps} Guests
+                            {invite._count?.rsvps || 0} Guests
                           </span>
                         </div>
                       </div>

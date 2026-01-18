@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getMyCircles } from "@/app/actions/circles";
-import { getMyInvites } from "@/app/actions/invites-fetch";
+import { getMyInvites } from "@/app/actions/invites";
 import { CircleWithRelations, InviteWithRelations } from "@/types";
 import Image from "next/image";
 import { SignOutButton } from "@/components/auth/sign-out-button";
@@ -21,9 +21,7 @@ import {
 export default async function Home() {
   const session = await auth();
 
-  // Initiate data fetching in parallel (don't await here!)
-  const circlesPromise = getMyCircles() as Promise<CircleWithRelations[]>;
-  const invitesPromise = getMyInvites() as Promise<InviteWithRelations[]>;
+
 
   if (!session?.user) {
     return (
@@ -40,6 +38,10 @@ export default async function Home() {
       </main>
     );
   }
+
+  // Initiate data fetching in parallel (don't await here!)
+  const circlesPromise = getMyCircles() as Promise<CircleWithRelations[]>;
+  const invitesPromise = getMyInvites() as Promise<InviteWithRelations[]>;
 
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">

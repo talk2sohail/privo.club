@@ -1,0 +1,24 @@
+[Unit]
+Description=Invito Go Backend API
+After=network.target
+
+[Service]
+User=root
+Group=root
+
+# Set working directory to where you will upload the binary
+WorkingDirectory=/home/backend/invito-backend
+
+# Command to run the binary
+ExecStart=/home/backend/invito-backend/api-linux-amd64
+
+# Restart automatically if it crashes
+Restart=always
+RestartSec=5
+
+# Environment Variables
+EnvironmentFile=/home/backend/invito-backend/.env
+Environment="LOG_FILE_PATH=/home/backend/invito-backend/invito-access.log"
+
+[Install]
+WantedBy=multi-user.target
