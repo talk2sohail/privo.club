@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"invito-backend/internal/config"
+	"privo-club-backend/internal/config"
 
 	"github.com/go-jose/go-jose/v3/jwt"
 )

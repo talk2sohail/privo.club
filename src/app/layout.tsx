@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Invito | Beautiful Occasions, Together",
-  description: "The modern way to invite and celebrate with your close ones.",
+  title: "Privo.club | Celebrate Moments That Matter",
+  description: "Celebrate moments that matter with your close ones.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Invito",
+    title: "Privo.club",
   },
   formatDetection: {
     telephone: false,

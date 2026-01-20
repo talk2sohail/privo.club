@@ -26,9 +26,9 @@ export default async function Home() {
   if (!session?.user) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Invito</h1>
+        <h1 className="text-4xl font-bold mb-4">Welcome to Privo.club</h1>
         <p className="text-muted-foreground mb-8">
-          Manage your events and circles in one place.
+          Celebrate moments that matter with your close ones.
         </p>
         <Link href="/auth/signin">
           <Button size="lg" className="rounded-full px-8">
@@ -55,7 +55,7 @@ export default async function Home() {
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 bg-linear-to-br from-primary to-primary/80">
               <span className="text-xl font-bold text-white">i</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Invito</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Privo.club</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">

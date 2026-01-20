@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Invito",
-    short_name: "Invito",
-    description: "The modern way to invite and celebrate with your close ones.",
+    name: "Privo.club",
+    short_name: "Privo",
+    description: "Celebrate moments that matter with your close ones.",
     start_url: "/",
     display: "standalone",
     background_color: "#09090b",
