@@ -1,7 +1,7 @@
-# GEMINI.md - Invito Project Context
+# GEMINI.md - Privo.club Project Context
 
 ## Project Purpose
-Invito is a modern event management and invitation platform. It allows users to create social "Circles", send invitations ("Invites"), manage RSVPs, and share updates and media within an event feed.
+Privo.club is a modern event management and invitation platform. It allows users to create social "Circles", send invitations ("Invites"), manage RSVPs, and share updates and media within an event feed.
 
 ## Architecture Overview
 - **Framework**: Next.js (App Router)

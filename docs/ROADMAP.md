@@ -1,6 +1,6 @@
-# Invito Feature Roadmap
+# Privo.club Feature Roadmap
 
-This roadmap outlines the plan to transform Invito into a feature-rich, visually stunning event management platform.
+This roadmap outlines the plan to transform Privo.club into a feature-rich, visually stunning event management platform.
 
 ## Phase 1: The "Premium Invite" Experience (Visual & Functional Core)
 **Goal:** Make every invite feel special and provide all necessary utility for guests.

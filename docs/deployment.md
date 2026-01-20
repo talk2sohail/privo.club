@@ -1,4 +1,4 @@
-# Invito Deployment Guide
+# Privo.club Deployment Guide
 
 This guide details how to deploy the **Go Backend** as a systemd service on an Ubuntu VPS and configure the **Next.js Frontend** to connect to it.
 
@@ -16,11 +16,11 @@ build-linux: ## Build for Linux amd64
 ```
 
 ### B. Create a Service File
-Create a file named `invito-backend.service` in your project (e.g., in `backend/deploy/`):
+Create a file named `privo-club-backend.service` in your project (e.g., in `backend/deploy/`):
 
 ```ini
 [Unit]
-Description=Invito Go Backend API
+Description=Privo.club Go Backend API
 After=network.target
 
 [Service]
@@ -29,10 +29,10 @@ User=ubuntu
 Group=ubuntu
 
 # Set working directory to where you will upload the binary
-WorkingDirectory=/home/ubuntu/invito-backend
+WorkingDirectory=/home/ubuntu/privo-club-backend
 
 # Command to run the binary
-ExecStart=/home/ubuntu/invito-backend/api
+ExecStart=/home/ubuntu/privo-club-backend/api
 
 # Restart automatically if it crashes
 Restart=always
@@ -40,7 +40,7 @@ RestartSec=5
 
 # Environment Variables (Or load from .env file with EnvironmentFile=...)
 Environment="PORT=8080"
-Environment="DATABASE_URL=postgresql://user:password@localhost:5432/invito"
+Environment="DATABASE_URL=postgresql://user:password@localhost:5432/privo_club"
 Environment="NEXTAUTH_SECRET=your-secret-key-here"
 
 [Install]
