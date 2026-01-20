@@ -1,4 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Privo.club - Celebrate Moments That Matter
+
+A modern event management and invitation platform built with Next.js and Go.
+
+## Features
+
+- **Circles**: Create social groups for different occasions
+- **Invitations**: Send beautiful, customizable event invitations
+- **RSVP Management**: Track guest responses easily
+- **Event Feed**: Share updates and media with your guests
+- **Progressive Web App**: Install on any device for offline access
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router) + TypeScript + Tailwind CSS v4
+- **Backend**: Go 1.25 with Chi router
+- **Database**: PostgreSQL
+- **Authentication**: NextAuth.js v5
 
 ## Getting Started
 

@@ -53,7 +53,7 @@ export default async function Home() {
         <header className="flex items-center justify-between mb-16 animate-fade-in-up">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 bg-linear-to-br from-primary to-primary/80">
-              <span className="text-xl font-bold text-white">i</span>
+              <span className="text-xl font-bold text-white">P</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Privo.club</h1>
           </div>
