@@ -25,16 +25,29 @@ export default async function Home() {
 
   if (!session?.user) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Invito</h1>
-        <p className="text-muted-foreground mb-8">
-          Manage your events and circles in one place.
-        </p>
-        <Link href="/auth/signin">
-          <Button size="lg" className="rounded-full px-8">
-            Sign In to Continue
-          </Button>
-        </Link>
+      <main className="min-h-screen bg-background relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full gradient-blur opacity-60 pointer-events-none" />
+        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-2xl space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/90 shadow-xl shadow-primary/25 flex items-center justify-center">
+              <span className="text-3xl font-semibold text-primary-foreground">
+                i
+              </span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight">
+              Welcome to Invito
+            </h1>
+            <p className="text-muted-foreground text-base sm:text-lg">
+              Curate intimate circles, host elevated gatherings, and keep every
+              occasion beautifully coordinated.
+            </p>
+            <Link href="/auth/signin">
+              <Button size="lg" className="rounded-full px-10">
+                Sign In to Continue
+              </Button>
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }
@@ -46,7 +59,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Background radial gradients */}
-      <div className="absolute top-0 left-0 w-full h-full gradient-blur opacity-50 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full gradient-blur opacity-60 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6 py-12 relative z-10">
         {/* Header */}
