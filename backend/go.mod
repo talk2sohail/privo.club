@@ -1,4 +1,4 @@
-module invito-backend
+module privo-club-backend
 
 go 1.25.1
 

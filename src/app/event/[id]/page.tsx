@@ -341,7 +341,7 @@ export default async function EventPage({ params }: EventPageProps) {
                   Host: {invite.sender.name}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  Original Invite sent via Invito
+                  Original Invite sent via Privo.club
                 </p>
               </div>
             </aside>

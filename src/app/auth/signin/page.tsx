@@ -24,11 +24,11 @@ export default async function SignInPage(props: {
       <Card className="w-full max-w-md glass border-white/20 relative z-10 backdrop-blur-2xl bg-white/5 dark:bg-black/40">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 mb-2">
-            <span className="text-2xl font-bold text-white">i</span>
+            <span className="text-2xl font-bold text-white">P</span>
           </div>
-          <CardTitle className="text-3xl font-bold tracking-tight">Welcome to Invito</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight">Welcome to Privo.club</CardTitle>
           <CardDescription className="text-base">
-            Reconnect with your close ones for the moments that matter.
+            Celebrate moments that matter with your close ones.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-4">

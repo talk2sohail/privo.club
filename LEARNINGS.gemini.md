@@ -1,4 +1,4 @@
-# LEARNINGS.gemini.md - Invito Learning Log
+# LEARNINGS.gemini.md - Privo.club Learning Log
 
 ## 2026-01-11
 ### Summary of Work So Far

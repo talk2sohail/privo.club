@@ -25,29 +25,16 @@ export default async function Home() {
 
   if (!session?.user) {
     return (
-      <main className="min-h-screen bg-background relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full gradient-blur opacity-60 pointer-events-none" />
-        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-2xl space-y-6">
-            <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/90 shadow-xl shadow-primary/25 flex items-center justify-center">
-              <span className="text-3xl font-semibold text-primary-foreground">
-                i
-              </span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight">
-              Welcome to Invito
-            </h1>
-            <p className="text-muted-foreground text-base sm:text-lg">
-              Curate intimate circles, host elevated gatherings, and keep every
-              occasion beautifully coordinated.
-            </p>
-            <Link href="/auth/signin">
-              <Button size="lg" className="rounded-full px-10">
-                Sign In to Continue
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <main className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
+        <h1 className="text-4xl font-bold mb-4">Welcome to Privo.club</h1>
+        <p className="text-muted-foreground mb-8">
+          Celebrate moments that matter with your close ones.
+        </p>
+        <Link href="/auth/signin">
+          <Button size="lg" className="rounded-full px-8">
+            Sign In to Continue
+          </Button>
+        </Link>
       </main>
     );
   }
@@ -66,9 +53,11 @@ export default async function Home() {
         <header className="flex items-center justify-between mb-16 animate-fade-in-up">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 bg-linear-to-br from-primary to-primary/80">
-              <span className="text-xl font-bold text-white">i</span>
+              <span className="text-xl font-bold text-white">P</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Invito</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              Privo<span className="bg-primary px-2 py-0.5 rounded-md ml-0.5">.club</span>
+            </h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-right">

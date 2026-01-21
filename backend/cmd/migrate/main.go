@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"invito-backend/internal/config"
-	"invito-backend/internal/db"
+	"privo-club-backend/internal/config"
+	"privo-club-backend/internal/db"
 
 	_ "github.com/lib/pq"
 )

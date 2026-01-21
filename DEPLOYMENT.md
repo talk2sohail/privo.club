@@ -1,6 +1,6 @@
 # Coolify Deployment Guide
 
-This guide details how to deploy the **Invito** application to your Coolify instance using **Nixpacks**.
+This guide details how to deploy the **Privo.club** application to your Coolify instance using **Nixpacks**.
 
 ## 1. Prerequisites
 - A running Coolify instance.
@@ -55,10 +55,10 @@ Navigate to the **Environment Variables** tab of your new Application and add th
     - Create a Circle/Event to verify data persistence.
 
 ## 7. Post-Deployment: OAuth
-After deploying, your app will be running on a new domain (e.g., `https://invito.coolify.yourdomain.com`). You **MUST** update your GitHub OAuth App:
+After deploying, your app will be running on a new domain (e.g., `https://privo.club`). You **MUST** update your GitHub OAuth App:
 
 1.  Go to **GitHub Settings** -> **Developer Settings** -> **OAuth Apps**.
-2.  Select your Invito app.
+2.  Select your Privo.club app.
 3.  Update **Homepage URL** to your new domain.
 4.  Update **Authorization callback URL** to:
     `https://your-new-domain.com/api/auth/callback/github`

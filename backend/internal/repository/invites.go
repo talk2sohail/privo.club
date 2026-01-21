@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"invito-backend/internal/models"
+	"privo-club-backend/internal/models"
 
 	"github.com/jmoiron/sqlx"
 )

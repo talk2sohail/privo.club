@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"invito-backend/internal/models"
+	"privo-club-backend/internal/models"
 )
 
 type CircleRepository interface {

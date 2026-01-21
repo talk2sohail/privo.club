@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"os"
 
-	"invito-backend/internal/auth"
-	"invito-backend/internal/config"
-	"invito-backend/internal/db"
-	"invito-backend/internal/handlers"
-	customMiddleware "invito-backend/internal/middleware"
-	"invito-backend/internal/repository"
+	"privo-club-backend/internal/auth"
+	"privo-club-backend/internal/config"
+	"privo-club-backend/internal/db"
+	"privo-club-backend/internal/handlers"
+	customMiddleware "privo-club-backend/internal/middleware"
+	"privo-club-backend/internal/repository"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -32,7 +32,7 @@ func main() {
 	authMiddleware := auth.Middleware(cfg)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Invito Backend API Running"))
+		w.Write([]byte("Privo.club Backend API Running"))
 	})
 
 	// Protected Routes

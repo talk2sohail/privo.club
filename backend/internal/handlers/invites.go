@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"invito-backend/internal/api"
-	"invito-backend/internal/auth"
-	"invito-backend/internal/models"
-	"invito-backend/internal/repository"
-	"invito-backend/internal/utils"
+	"privo-club-backend/internal/api"
+	"privo-club-backend/internal/auth"
+	"privo-club-backend/internal/models"
+	"privo-club-backend/internal/repository"
+	"privo-club-backend/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 )

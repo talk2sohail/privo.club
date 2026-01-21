@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"invito-backend/internal/api"
-	"invito-backend/internal/models"
-	"invito-backend/internal/repository"
+	"privo-club-backend/internal/api"
+	"privo-club-backend/internal/models"
+	"privo-club-backend/internal/repository"
 
 	"github.com/go-chi/chi/v5"
 )
