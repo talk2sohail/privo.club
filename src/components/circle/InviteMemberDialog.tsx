@@ -58,7 +58,7 @@ export function InviteMemberDialog({
 
 	// Limited links state
 	const [limitedLinks, setLimitedLinks] = useState<CircleInviteLink[]>([]);
-	const [maxUses, setMaxUses] = useState("5");
+	const [maxUses, setMaxUses] = useState(5);
 	const [isCreatingLink, setIsCreatingLink] = useState(false);
 	const [isLoadingLinks, setIsLoadingLinks] = useState(false);
 
@@ -126,17 +126,16 @@ export function InviteMemberDialog({
 	};
 
 	const handleCreateLimitedLink = async () => {
-		const uses = parseInt(maxUses);
-		if (uses < 1) {
-			toast.error("Max uses must be at least 1");
+		if (!maxUses || maxUses < 1 || !Number.isInteger(maxUses)) {
+			toast.error("Max uses must be a valid number of at least 1");
 			return;
 		}
 
 		try {
 			setIsCreatingLink(true);
-			await createInviteLink(circleId, uses);
+			await createInviteLink(circleId, maxUses);
 			toast.success("Limited invite link created");
-			setMaxUses("5"); // Reset
+			setMaxUses(5); // Reset
 			await loadLimitedLinks();
 		} catch {
 			toast.error("Failed to create invite link");
@@ -278,8 +277,20 @@ export function InviteMemberDialog({
 											id="max-uses"
 											type="number"
 											min="1"
+											step="1"
 											value={maxUses}
-											onChange={(e) => setMaxUses(e.target.value)}
+											onChange={(e) => {
+												const val = parseInt(e.target.value);
+												if (!isNaN(val) && val > 0) {
+													setMaxUses(val);
+												}
+											}}
+											onKeyDown={(e) => {
+												// Prevent decimal point, e, +, - characters
+												if (['.', 'e', 'E', '+', '-'].includes(e.key)) {
+													e.preventDefault();
+												}
+											}}
 											className="bg-zinc-900/50 border-white/10 text-white"
 										/>
 										<Button

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -134,8 +135,8 @@ func (h *CirclesHandler) JoinCircleByCode(w http.ResponseWriter, r *http.Request
 	// 5. If using limited link, increment usage count
 	if inviteLink != nil {
 		if err := h.Repo.IncrementInviteLinkUsage(r.Context(), inviteLink.ID); err != nil {
-			// Log error but don't fail the join
-			// The member was already added successfully
+			// Log error but don't fail the join - the member was already added successfully
+			slog.Error("Failed to increment invite link usage", "linkID", inviteLink.ID, "error", err)
 		}
 	}
 
