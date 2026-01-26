@@ -38,9 +38,9 @@ func TestCreateCircle(t *testing.T) {
 			},
 			mockBehavior: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
-				// Circle Insert
+				// Circle Insert - now includes isInviteLinkEnabled
 				mock.ExpectExec(`INSERT INTO "Circle"`).
-					WithArgs(sqlmock.AnyArg(), "Test Circle", "A description", sqlmock.AnyArg(), "user-123", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(sqlmock.AnyArg(), "Test Circle", "A description", sqlmock.AnyArg(), true, "user-123", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 				// Member Insert
 				mock.ExpectExec(`INSERT INTO "CircleMember"`).
@@ -229,13 +229,25 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-new",
 			code:   "valid-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
-				// Get Circle Detailed
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("valid-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then get Circle by general invite code
 				rows := sqlmock.NewRows([]string{"id", "inviteCode", "ownerId", "owner_id", "owner_name", "owner_email", "owner_image", "member_count"}).
 					AddRow("circle-1", "valid-code", "owner-1", "owner-1", "Owner Name", "owner@example.com", nil, 5)
 
 				mock.ExpectQuery(`SELECT\s+c\.\*,\s+owner\.id\s+as\s+owner_id`).
 					WithArgs("valid-code").
 					WillReturnRows(rows)
+
+				// Get Circle details to check isInviteLinkEnabled
+				circleRows := sqlmock.NewRows([]string{"id", "name", "description", "inviteCode", "isInviteLinkEnabled", "ownerId", "createdAt", "updatedAt"}).
+					AddRow("circle-1", "Test Circle", nil, "valid-code", true, "owner-1", time.Now(), time.Now())
+				mock.ExpectQuery(`SELECT \* FROM "Circle"`).
+					WithArgs("circle-1").
+					WillReturnRows(circleRows)
 
 				// Check Member (Not member)
 				countRows := sqlmock.NewRows([]string{"count"}).AddRow(0)
@@ -256,6 +268,12 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-member",
 			code:   "valid-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("valid-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then get Circle by general invite code
 				rows := sqlmock.NewRows([]string{"id", "inviteCode", "ownerId", "owner_id", "owner_name", "owner_email", "owner_image", "member_count"}).
 					AddRow("circle-1", "valid-code", "owner-1", "owner-1", "Owner Name", "owner@example.com", nil, 5)
 
@@ -263,6 +281,14 @@ func TestJoinCircleByCode(t *testing.T) {
 					WithArgs("valid-code").
 					WillReturnRows(rows)
 
+				// Get Circle details to check isInviteLinkEnabled
+				circleRows := sqlmock.NewRows([]string{"id", "name", "description", "inviteCode", "isInviteLinkEnabled", "ownerId", "createdAt", "updatedAt"}).
+					AddRow("circle-1", "Test Circle", nil, "valid-code", true, "owner-1", time.Now(), time.Now())
+				mock.ExpectQuery(`SELECT \* FROM "Circle"`).
+					WithArgs("circle-1").
+					WillReturnRows(circleRows)
+
+				// Check Member (Already member)
 				countRows := sqlmock.NewRows([]string{"count"}).AddRow(1)
 				mock.ExpectQuery(`SELECT count\(\*\) FROM "CircleMember"`).
 					WithArgs("circle-1", "user-member").
@@ -276,6 +302,12 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-new",
 			code:   "bad-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("bad-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then try general code (will fail)
 				mock.ExpectQuery(`SELECT\s+c\.\*,\s+owner\.id\s+as\s+owner_id`).
 					WithArgs("bad-code").
 					WillReturnError(errors.New("no rows"))
