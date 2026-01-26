@@ -21,10 +21,11 @@ model User {
   // App specific relationships
   ownedCircles  Circle[]  @relation("CircleOwner")
   memberships   CircleMember[]
-  invitesSent   Invite[]  @relation("InviteSender")
-  rsvpResponses RSVP[]
-  feedItems     EventFeedItem[]
-  mediaUploads  MediaItem[]
+  invitesSent      Invite[]  @relation("InviteSender")
+  rsvpResponses    RSVP[]
+  feedItems        EventFeedItem[]
+  mediaUploads     MediaItem[]
+  createdInviteLinks CircleInviteLink[]
 }
 
 model Account {
@@ -63,17 +64,19 @@ model VerificationToken {
 }
 
 model Circle {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  inviteCode  String   @unique @default(cuid())
-  ownerId     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  name                String
+  description         String?
+  inviteCode          String   @unique @default(cuid())
+  isInviteLinkEnabled Boolean  @default(true)
+  ownerId             String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   owner       User     @relation("CircleOwner", fields: [ownerId], references: [id])
   members     CircleMember[]
   invites     Invite[]
+  inviteLinks CircleInviteLink[]
 }
 
 model CircleMember {
@@ -81,6 +84,7 @@ model CircleMember {
   circleId  String
   userId    String
   role      String   @default("MEMBER") // OWNER, ADMIN, MEMBER
+  status    String   @default("ACTIVE") // ACTIVE, PENDING
   joinedAt  DateTime @default(now())
 
   circle    Circle   @relation(fields: [circleId], references: [id], onDelete: Cascade)
@@ -147,4 +151,18 @@ model MediaItem {
 
   invite    Invite   @relation(fields: [inviteId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CircleInviteLink {
+  id        String    @id @default(cuid())
+  circleId  String
+  code      String    @unique
+  maxUses   Int
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  creatorId String
+
+  circle  Circle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  creator User   @relation(fields: [creatorId], references: [id])
 }
