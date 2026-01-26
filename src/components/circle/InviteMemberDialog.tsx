@@ -69,7 +69,7 @@ export function InviteMemberDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="sm:max-w-md bg-zinc-950/90 border-white/10 text-white backdrop-blur-xl shadow-2xl">
+			<DialogContent className="sm:max-w-lg bg-zinc-950/90 border-white/10 text-white backdrop-blur-xl shadow-2xl">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2 text-xl">
 						<LinkIcon className="w-5 h-5 text-blue-500" />
