@@ -102,6 +102,7 @@ export default async function CirclePage({ params }: CirclePageProps) {
             <InviteMemberDialog
               circleId={circle.id}
               inviteCode={circle.inviteCode}
+              isInviteLinkEnabled={circle.isInviteLinkEnabled}
               isOwner={isOwner}
             >
               <Button className="rounded-full h-12 px-6 font-bold shadow-lg shadow-primary/25">
