@@ -12,6 +12,7 @@ export interface Circle {
   name: string;
   description?: string;
   inviteCode: string;
+  isInviteLinkEnabled: boolean;
   ownerId: string;
   createdAt: string;
   updatedAt: string;
@@ -73,6 +74,17 @@ export interface Member {
   role: string;
   status: "PENDING" | "ACTIVE";
   joinedAt: string;
+}
+
+export interface CircleInviteLink {
+  id: string;
+  circleId: string;
+  code: string;
+  maxUses: number;
+  usedCount: number;
+  expiresAt?: string;
+  createdAt: string;
+  creatorId: string;
 }
 
 export interface CircleWithMembers extends Circle {

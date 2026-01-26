@@ -104,3 +104,39 @@ export async function removeMember(circleId: string, userId: string) {
   });
   revalidatePath(`/circle/${circleId}`);
 }
+
+export async function updateCircleSettings(
+  circleId: string,
+  settings: { isInviteLinkEnabled?: boolean }
+) {
+  await fetchFromBackend(`/circles/${circleId}/settings`, {
+    method: "PATCH",
+    body: JSON.stringify(settings),
+  });
+  revalidatePath(`/circle/${circleId}`);
+}
+
+export async function createInviteLink(circleId: string, maxUses: number) {
+  const result = await fetchFromBackend(`/circles/${circleId}/invites`, {
+    method: "POST",
+    body: JSON.stringify({ maxUses }),
+  });
+  revalidatePath(`/circle/${circleId}`);
+  return result;
+}
+
+export async function getInviteLinks(circleId: string) {
+  try {
+    return await fetchFromBackend(`/circles/${circleId}/invites`);
+  } catch (e) {
+    console.error("Failed to fetch invite links:", e);
+    return [];
+  }
+}
+
+export async function revokeInviteLink(circleId: string, inviteId: string) {
+  await fetchFromBackend(`/circles/${circleId}/invites/${inviteId}`, {
+    method: "DELETE",
+  });
+  revalidatePath(`/circle/${circleId}`);
+}
