@@ -41,3 +41,9 @@ type FeedRepository interface {
 type AuthRepository interface {
 	SyncUser(ctx context.Context, user *models.User) error
 }
+
+type UserRepository interface {
+	GetUserByID(ctx context.Context, userID string) (*models.User, error)
+	GetUserStats(ctx context.Context, userID string) (*models.UserStats, error)
+	UpdateProfile(ctx context.Context, userID string, req *models.UpdateProfileRequest) error
+}

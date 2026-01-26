@@ -41,6 +41,7 @@ func main() {
 	circlesHandler := handlers.NewCirclesHandler(repo.Circles)
 	invitesHandler := handlers.NewInvitesHandler(repo.Invites)
 	feedHandler := handlers.NewFeedHandler(repo.Feed)
+	userHandler := handlers.NewUserHandler(repo.User)
 
 	// Circles Routes (Mixed Public/Protected)
 	r.Route("/api/circles", func(r chi.Router) {
@@ -61,6 +62,7 @@ func main() {
 		r.Route("/api/auth", authHandler.RegisterRoutes)
 		r.Route("/api/invites", invitesHandler.RegisterRoutes)
 		r.Route("/api/feed", feedHandler.RegisterRoutes)
+		r.Route("/api/users", userHandler.RegisterRoutes)
 	})
 
 	slog.Info("Starting server", "port", cfg.Port)

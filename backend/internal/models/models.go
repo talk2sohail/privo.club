@@ -6,11 +6,15 @@ import (
 
 // User mirrors the User model in Prisma
 type User struct {
-	ID            string     `db:"id" json:"id"`
-	Name          *string    `db:"name" json:"name,omitempty"`
-	Email         *string    `db:"email" json:"email,omitempty"`
-	EmailVerified *time.Time `db:"emailVerified" json:"emailVerified,omitempty"`
-	Image         *string    `db:"image" json:"image,omitempty"`
+	ID                      string     `db:"id" json:"id"`
+	Name                    *string    `db:"name" json:"name,omitempty"`
+	Email                   *string    `db:"email" json:"email,omitempty"`
+	EmailVerified           *time.Time `db:"emailVerified" json:"emailVerified,omitempty"`
+	Image                   *string    `db:"image" json:"image,omitempty"`
+	Bio                     *string    `db:"bio" json:"bio,omitempty"`
+	ProfileVisibility       *string    `db:"profileVisibility" json:"profileVisibility,omitempty"`
+	NotificationPreferences *string    `db:"notificationPreferences" json:"notificationPreferences,omitempty"`
+	CreatedAt               *time.Time `db:"createdAt" json:"createdAt,omitempty"`
 }
 
 // Circle mirrors the Circle model in Prisma
@@ -184,4 +188,26 @@ type SyncUserRequest struct {
 	Email         string     `json:"email"`
 	Image         *string    `json:"image"`
 	EmailVerified *time.Time `json:"emailVerified"`
+}
+
+// User Profile Structs
+
+type UserStats struct {
+	CirclesOwned     int     `json:"circlesOwned"`
+	CirclesJoined    int     `json:"circlesJoined"`
+	EventsCreated    int     `json:"eventsCreated"`
+	EventsAttended   int     `json:"eventsAttended"`
+	RSVPResponseRate float64 `json:"rsvpResponseRate"`
+	PostsShared      int     `json:"postsShared"`
+}
+
+type UserProfileResponse struct {
+	User
+	Stats UserStats `json:"stats"`
+}
+
+type UpdateProfileRequest struct {
+	Name              *string `json:"name"`
+	Bio               *string `json:"bio"`
+	ProfileVisibility *string `json:"profileVisibility"`
 }
