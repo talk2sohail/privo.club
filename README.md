@@ -1,53 +1,188 @@
-# Privo.club - Celebrate Moments That Matter
+<div align="center">
+  <img src="public/icons/icon-192.png" alt="Privo.club Logo" width="120" height="120" />
+  
+  # Privo.club
+  
+  ### Celebrate Moments That Matter
+  
+  <p align="center">
+    A modern social event platform for creating intimate gatherings with the people who matter most
+  </p>
 
-A modern event management and invitation platform built with Next.js and Go.
+  <p align="center">
+    <a href="https://privo.club">Website</a>
+    ·
+    <a href="https://github.com/talk2sohail/invito/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/talk2sohail/invito/issues">Request Feature</a>
+  </p>
 
-## Features
+![Deployment](https://img.shields.io/badge/deployment-coolify-6366f1?style=flat-square&logo=docker)
+![Status](https://img.shields.io/website?url=https%3A%2F%2Fprivo.club&style=flat-square&label=status)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Version](https://img.shields.io/github/package-json/v/talk2sohail/invito?style=flat-square)
+![Go Version](https://img.shields.io/github/go-mod/go-version/talk2sohail/invito?filename=backend%2Fgo.mod&style=flat-square)
 
-- **Circles**: Create social groups for different occasions
-- **Invitations**: Send beautiful, customizable event invitations
-- **RSVP Management**: Track guest responses easily
-- **Event Feed**: Share updates and media with your guests
-- **Progressive Web App**: Install on any device for offline access
+</div>
 
-## Tech Stack
+---
 
-- **Frontend**: Next.js 16 (App Router) + TypeScript + Tailwind CSS v4
-- **Backend**: Go 1.25 with Chi router
-- **Database**: PostgreSQL
-- **Authentication**: NextAuth.js v5
+## 🌟 Overview
 
-## Getting Started
+Privo.club is a privacy-focused social event platform that helps you organize and celebrate life's special moments with your close ones. No noise, no strangers—just your people.
 
-First, run the development server:
+## ✨ Features
+
+- **🔒 Private Circles**: Create invite-only social groups (hives) for different occasions
+- **📨 Beautiful Invitations**: Send customizable event invitations with RSVP tracking
+- **📱 Progressive Web App**: Install on any device with offline support
+- **💬 Event Feed**: Share updates, photos, and memories after events
+- **👥 Member Management**: Approve/reject member requests and manage permissions
+- **🎨 Modern UI**: Beautiful, responsive design with Tailwind CSS v4 and shadcn/ui
+
+## 🚀 Tech Stack
+
+### Frontend
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Authentication**: NextAuth.js v5 (Google, GitHub OAuth)
+- **PWA**: Serwist for service workers
+
+### Backend
+
+- **Language**: Go 1.25+
+- **Router**: Chi
+- **Database**: PostgreSQL with manual migrations
+- **Auth**: JWT validation synchronized with NextAuth
+
+## 📋 Prerequisites
+
+- Node.js 18+ and npm
+- Go 1.25+
+- PostgreSQL 14+
+- GitHub and/or Google OAuth credentials
+
+## 🛠️ Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/talk2sohail/invito.git
+cd invito
+```
+
+### 2. Set up environment variables
+
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/privo
+AUTH_SECRET=your-random-secret-here
+AUTH_TRUST_HOST=true
+BACKEND_URL=http://localhost:8080/api
+NEXTAUTH_URL=http://localhost:3000
+
+# OAuth Providers
+AUTH_GOOGLE_ID=your-google-client-id
+AUTH_GOOGLE_SECRET=your-google-client-secret
+AUTH_GITHUB_ID=your-github-client-id
+AUTH_GITHUB_SECRET=your-github-client-secret
+```
+
+### 3. Install dependencies and run migrations
+
+**Frontend:**
+
+```bash
+npm install
+```
+
+**Backend:**
+
+```bash
+cd backend
+go mod download
+make migrate
+```
+
+### 4. Start the development servers
+
+**Terminal 1 - Frontend:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Terminal 2 - Backend:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cd backend
+make run
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-## Learn More
+## 🧪 Running Tests
 
-To learn more about Next.js, take a look at the following resources:
+**Frontend:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+npm run type-check
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Backend:**
 
-## Deploy on Vercel
+```bash
+cd backend
+make test
+make coverage  # Opens HTML coverage report
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Building for Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Frontend:**
+
+```bash
+npm run build
+npm start
+```
+
+**Backend:**
+
+```bash
+cd backend
+make build
+./bin/api
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Icons from [Lucide](https://lucide.dev/)
+
+---
+
+<div align="center">
+  <p>Made with ❤️ for celebrating moments that matter</p>
+  <p>
+    <a href="https://privo.club">privo.club</a>
+  </p>
+</div>
