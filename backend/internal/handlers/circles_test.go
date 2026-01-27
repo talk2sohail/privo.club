@@ -38,9 +38,9 @@ func TestCreateCircle(t *testing.T) {
 			},
 			mockBehavior: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
-				// Circle Insert
+				// Circle Insert - now includes isInviteLinkEnabled
 				mock.ExpectExec(`INSERT INTO "Circle"`).
-					WithArgs(sqlmock.AnyArg(), "Test Circle", "A description", sqlmock.AnyArg(), "user-123", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(sqlmock.AnyArg(), "Test Circle", "A description", sqlmock.AnyArg(), true, "user-123", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 				// Member Insert
 				mock.ExpectExec(`INSERT INTO "CircleMember"`).
@@ -229,13 +229,25 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-new",
 			code:   "valid-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
-				// Get Circle Detailed
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("valid-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then get Circle by general invite code
 				rows := sqlmock.NewRows([]string{"id", "inviteCode", "ownerId", "owner_id", "owner_name", "owner_email", "owner_image", "member_count"}).
 					AddRow("circle-1", "valid-code", "owner-1", "owner-1", "Owner Name", "owner@example.com", nil, 5)
 
 				mock.ExpectQuery(`SELECT\s+c\.\*,\s+owner\.id\s+as\s+owner_id`).
 					WithArgs("valid-code").
 					WillReturnRows(rows)
+
+				// Get Circle details to check isInviteLinkEnabled
+				circleRows := sqlmock.NewRows([]string{"id", "name", "description", "inviteCode", "isInviteLinkEnabled", "ownerId", "createdAt", "updatedAt"}).
+					AddRow("circle-1", "Test Circle", nil, "valid-code", true, "owner-1", time.Now(), time.Now())
+				mock.ExpectQuery(`SELECT \* FROM "Circle"`).
+					WithArgs("circle-1").
+					WillReturnRows(circleRows)
 
 				// Check Member (Not member)
 				countRows := sqlmock.NewRows([]string{"count"}).AddRow(0)
@@ -256,6 +268,12 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-member",
 			code:   "valid-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("valid-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then get Circle by general invite code
 				rows := sqlmock.NewRows([]string{"id", "inviteCode", "ownerId", "owner_id", "owner_name", "owner_email", "owner_image", "member_count"}).
 					AddRow("circle-1", "valid-code", "owner-1", "owner-1", "Owner Name", "owner@example.com", nil, 5)
 
@@ -263,6 +281,14 @@ func TestJoinCircleByCode(t *testing.T) {
 					WithArgs("valid-code").
 					WillReturnRows(rows)
 
+				// Get Circle details to check isInviteLinkEnabled
+				circleRows := sqlmock.NewRows([]string{"id", "name", "description", "inviteCode", "isInviteLinkEnabled", "ownerId", "createdAt", "updatedAt"}).
+					AddRow("circle-1", "Test Circle", nil, "valid-code", true, "owner-1", time.Now(), time.Now())
+				mock.ExpectQuery(`SELECT \* FROM "Circle"`).
+					WithArgs("circle-1").
+					WillReturnRows(circleRows)
+
+				// Check Member (Already member)
 				countRows := sqlmock.NewRows([]string{"count"}).AddRow(1)
 				mock.ExpectQuery(`SELECT count\(\*\) FROM "CircleMember"`).
 					WithArgs("circle-1", "user-member").
@@ -276,6 +302,12 @@ func TestJoinCircleByCode(t *testing.T) {
 			userID: "user-new",
 			code:   "bad-code",
 			mockBehavior: func(mock sqlmock.Sqlmock) {
+				// First, try to find CircleInviteLink (will fail)
+				mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+					WithArgs("bad-code").
+					WillReturnError(errors.New("no rows"))
+
+				// Then try general code (will fail)
 				mock.ExpectQuery(`SELECT\s+c\.\*,\s+owner\.id\s+as\s+owner_id`).
 					WithArgs("bad-code").
 					WillReturnError(errors.New("no rows"))
@@ -831,4 +863,139 @@ func TestRemoveMember(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCreateInviteLink(t *testing.T) {
+tests := []struct {
+name           string
+userID         string
+circleID       string
+requestBody    map[string]interface{}
+mockBehavior   func(mock sqlmock.Sqlmock)
+expectedStatus int
+}{
+{
+name:     "Success",
+userID:   "user-owner",
+circleID: "circle-1",
+requestBody: map[string]interface{}{
+"maxUses": 5,
+},
+mockBehavior: func(mock sqlmock.Sqlmock) {
+// Verify Owner
+rows := sqlmock.NewRows([]string{"ownerId"}).AddRow("user-owner")
+mock.ExpectQuery(`SELECT "ownerId" FROM "Circle" WHERE id = \$1`).
+WithArgs("circle-1").
+WillReturnRows(rows)
+
+// Create Invite Link
+mock.ExpectExec(`INSERT INTO "CircleInviteLink"`).
+WithArgs(sqlmock.AnyArg(), "circle-1", sqlmock.AnyArg(), 5, 0, nil, sqlmock.AnyArg(), "user-owner").
+WillReturnResult(sqlmock.NewResult(1, 1))
+},
+expectedStatus: http.StatusCreated,
+},
+{
+name:     "Forbidden - Not Owner",
+userID:   "user-member",
+circleID: "circle-1",
+requestBody: map[string]interface{}{
+"maxUses": 5,
+},
+mockBehavior: func(mock sqlmock.Sqlmock) {
+rows := sqlmock.NewRows([]string{"ownerId"}).AddRow("user-owner")
+mock.ExpectQuery(`SELECT "ownerId" FROM "Circle" WHERE id = \$1`).
+WithArgs("circle-1").
+WillReturnRows(rows)
+},
+expectedStatus: http.StatusForbidden,
+},
+}
+
+for _, tt := range tests {
+t.Run(tt.name, func(t *testing.T) {
+mockDB, mock, err := sqlmock.New()
+if err != nil {
+t.Fatalf("an error stubbing db: %s", err)
+}
+defer mockDB.Close()
+sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
+repo := repository.NewCircleRepository(sqlxDB)
+handler := NewCirclesHandler(repo)
+
+body, _ := json.Marshal(tt.requestBody)
+req, _ := http.NewRequest("POST", "/circles/"+tt.circleID+"/invites", bytes.NewBuffer(body))
+
+if tt.userID != "" {
+ctx := context.WithValue(req.Context(), auth.UserIDKey, tt.userID)
+req = req.WithContext(ctx)
+}
+
+rctx := chi.NewRouteContext()
+rctx.URLParams.Add("id", tt.circleID)
+req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+tt.mockBehavior(mock)
+rr := httptest.NewRecorder()
+api.Handler(handler.CreateInviteLink).ServeHTTP(rr, req)
+assert.Equal(t, tt.expectedStatus, rr.Code)
+
+if err := mock.ExpectationsWereMet(); err != nil {
+t.Errorf("unfulfilled expectations: %s", err)
+}
+})
+}
+}
+
+func TestJoinCircleByLimitedLink(t *testing.T) {
+// Test joining via limited-use link
+mockDB, mock, err := sqlmock.New()
+if err != nil {
+t.Fatalf("an error stubbing db: %s", err)
+}
+defer mockDB.Close()
+sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
+repo := repository.NewCircleRepository(sqlxDB)
+handler := NewCirclesHandler(repo)
+
+// First, find CircleInviteLink (success this time)
+linkRows := sqlmock.NewRows([]string{"id", "circleId", "code", "maxUses", "usedCount", "expiresAt", "createdAt", "creatorId"}).
+AddRow("link-1", "circle-1", "limited-code", 5, 2, nil, time.Now(), "user-owner")
+mock.ExpectQuery(`SELECT \* FROM "CircleInviteLink"`).
+WithArgs("limited-code").
+WillReturnRows(linkRows)
+
+// Check Member (Not member)
+countRows := sqlmock.NewRows([]string{"count"}).AddRow(0)
+mock.ExpectQuery(`SELECT count\(\*\) FROM "CircleMember"`).
+WithArgs("circle-1", "user-new").
+WillReturnRows(countRows)
+
+// Add Member with ACTIVE status
+mock.ExpectExec(`INSERT INTO "CircleMember"`).
+WithArgs(sqlmock.AnyArg(), "circle-1", "user-new", "MEMBER", "ACTIVE", sqlmock.AnyArg()).
+WillReturnResult(sqlmock.NewResult(1, 1))
+
+// Increment usage count
+mock.ExpectExec(`UPDATE "CircleInviteLink" SET "usedCount" = "usedCount" \+ 1`).
+WithArgs("link-1").
+WillReturnResult(sqlmock.NewResult(1, 1))
+
+req, _ := http.NewRequest("POST", "/circles/join/limited-code", nil)
+ctx := context.WithValue(req.Context(), auth.UserIDKey, "user-new")
+req = req.WithContext(ctx)
+
+rctx := chi.NewRouteContext()
+rctx.URLParams.Add("code", "limited-code")
+req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+rr := httptest.NewRecorder()
+api.Handler(handler.JoinCircleByCode).ServeHTTP(rr, req)
+
+assert.Equal(t, http.StatusOK, rr.Code)
+assert.Contains(t, rr.Body.String(), `"success":true`)
+
+if err := mock.ExpectationsWereMet(); err != nil {
+t.Errorf("unfulfilled expectations: %s", err)
+}
 }

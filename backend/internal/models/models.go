@@ -15,13 +15,14 @@ type User struct {
 
 // Circle mirrors the Circle model in Prisma
 type Circle struct {
-	ID          string    `db:"id" json:"id"`
-	Name        string    `db:"name" json:"name"`
-	Description *string   `db:"description" json:"description,omitempty"`
-	InviteCode  string    `db:"inviteCode" json:"inviteCode"`
-	OwnerID     string    `db:"ownerId" json:"ownerId"`
-	CreatedAt   time.Time `db:"createdAt" json:"createdAt"`
-	UpdatedAt   time.Time `db:"updatedAt" json:"updatedAt"`
+	ID                  string    `db:"id" json:"id"`
+	Name                string    `db:"name" json:"name"`
+	Description         *string   `db:"description" json:"description,omitempty"`
+	InviteCode          string    `db:"inviteCode" json:"inviteCode"`
+	IsInviteLinkEnabled bool      `db:"isInviteLinkEnabled" json:"isInviteLinkEnabled"`
+	OwnerID             string    `db:"ownerId" json:"ownerId"`
+	CreatedAt           time.Time `db:"createdAt" json:"createdAt"`
+	UpdatedAt           time.Time `db:"updatedAt" json:"updatedAt"`
 }
 
 // CircleMember mirrors the CircleMember model in Prisma
@@ -32,6 +33,18 @@ type CircleMember struct {
 	Role     string    `db:"role" json:"role"`     // OWNER, ADMIN, MEMBER
 	Status   string    `db:"status" json:"status"` // PENDING, ACTIVE
 	JoinedAt time.Time `db:"joinedAt" json:"joinedAt"`
+}
+
+// CircleInviteLink represents a limited-use auto-approve invite link
+type CircleInviteLink struct {
+	ID        string     `db:"id" json:"id"`
+	CircleID  string     `db:"circleId" json:"circleId"`
+	Code      string     `db:"code" json:"code"`
+	MaxUses   int        `db:"maxUses" json:"maxUses"`
+	UsedCount int        `db:"usedCount" json:"usedCount"`
+	ExpiresAt *time.Time `db:"expiresAt" json:"expiresAt,omitempty"`
+	CreatedAt time.Time  `db:"createdAt" json:"createdAt"`
+	CreatorID string     `db:"creatorId" json:"creatorId"`
 }
 
 // Invite mirrors the Invite model in Prisma
@@ -151,6 +164,14 @@ type CircleDetailsResponse struct {
 type CreateCircleRequest struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
+}
+
+type UpdateCircleSettingsRequest struct {
+	IsInviteLinkEnabled *bool `json:"isInviteLinkEnabled"`
+}
+
+type CreateInviteLinkRequest struct {
+	MaxUses int `json:"maxUses"`
 }
 
 type JoinCircleRequest struct {

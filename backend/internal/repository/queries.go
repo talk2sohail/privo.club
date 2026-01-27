@@ -15,8 +15,8 @@ const (
 
 	// Circle Queries
 	QueryCreateCircle = `
-		INSERT INTO "Circle" (id, name, description, "inviteCode", "ownerId", "createdAt", "updatedAt")
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO "Circle" (id, name, description, "inviteCode", "isInviteLinkEnabled", "ownerId", "createdAt", "updatedAt")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 	QueryAddMember = `
 		INSERT INTO "CircleMember" (id, "circleId", "userId", role, status, "joinedAt")
@@ -69,6 +69,19 @@ const (
 	QueryUpdateMemberStatus = `UPDATE "CircleMember" SET status = $1 WHERE "circleId" = $2 AND "userId" = $3`
 	QueryRemoveMember       = `DELETE FROM "CircleMember" WHERE "circleId" = $1 AND "userId" = $2`
 	QueryGetMemberStatus    = `SELECT status FROM "CircleMember" WHERE "circleId" = $1 AND "userId" = $2`
+
+	// Circle settings
+	QueryUpdateCircleSettings = `UPDATE "Circle" SET "isInviteLinkEnabled" = $1, "updatedAt" = NOW() WHERE id = $2`
+
+	// Invite link queries
+	QueryCreateInviteLink = `
+		INSERT INTO "CircleInviteLink" (id, "circleId", code, "maxUses", "usedCount", "expiresAt", "createdAt", "creatorId")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+	QueryGetInviteLinkByCode = `SELECT * FROM "CircleInviteLink" WHERE code = $1`
+	QueryGetInviteLinks      = `SELECT * FROM "CircleInviteLink" WHERE "circleId" = $1 AND "usedCount" < "maxUses" ORDER BY "createdAt" DESC`
+	QueryDeleteInviteLink    = `DELETE FROM "CircleInviteLink" WHERE id = $1`
+	QueryIncrementInviteLinkUsage = `UPDATE "CircleInviteLink" SET "usedCount" = "usedCount" + 1 WHERE id = $1`
 
 	// Invite Queries
 	QueryCreateInvite = `

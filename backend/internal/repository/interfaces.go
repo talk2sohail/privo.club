@@ -21,6 +21,14 @@ type CircleRepository interface {
 	UpdateMemberStatus(ctx context.Context, circleID, userID, status string) error
 	RemoveMember(ctx context.Context, circleID, userID string) error
 	GetMemberStatus(ctx context.Context, circleID, userID string) (string, error)
+	// Circle settings
+	UpdateCircleSettings(ctx context.Context, circleID string, isInviteLinkEnabled bool) error
+	// Invite link management
+	CreateInviteLink(ctx context.Context, link *models.CircleInviteLink) error
+	GetInviteLinkByCode(ctx context.Context, code string) (*models.CircleInviteLink, error)
+	GetInviteLinks(ctx context.Context, circleID string) ([]models.CircleInviteLink, error)
+	DeleteInviteLink(ctx context.Context, linkID string) error
+	IncrementInviteLinkUsage(ctx context.Context, linkID string) error
 }
 
 type InviteRepository interface {

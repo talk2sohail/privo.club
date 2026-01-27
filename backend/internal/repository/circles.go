@@ -17,7 +17,7 @@ func NewCircleRepository(db *sqlx.DB) CircleRepository {
 }
 
 func (r *circleRepository) CreateCircle(ctx context.Context, circle *models.Circle) error {
-	_, err := r.db.ExecContext(ctx, QueryCreateCircle, circle.ID, circle.Name, circle.Description, circle.InviteCode, circle.OwnerID, circle.CreatedAt, circle.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, QueryCreateCircle, circle.ID, circle.Name, circle.Description, circle.InviteCode, circle.IsInviteLinkEnabled, circle.OwnerID, circle.CreatedAt, circle.UpdatedAt)
 	return err
 }
 
@@ -32,7 +32,7 @@ func (r *circleRepository) CreateCircleWithMember(ctx context.Context, circle *m
 		return err
 	}
 
-	_, err = tx.ExecContext(ctx, QueryCreateCircle, circle.ID, circle.Name, circle.Description, circle.InviteCode, circle.OwnerID, circle.CreatedAt, circle.UpdatedAt)
+	_, err = tx.ExecContext(ctx, QueryCreateCircle, circle.ID, circle.Name, circle.Description, circle.InviteCode, circle.IsInviteLinkEnabled, circle.OwnerID, circle.CreatedAt, circle.UpdatedAt)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -255,6 +255,47 @@ func (r *circleRepository) GetMemberStatus(ctx context.Context, circleID, userID
 	var status string
 	err := r.db.GetContext(ctx, &status, QueryGetMemberStatus, circleID, userID)
 	return status, err
+}
+
+func (r *circleRepository) UpdateCircleSettings(ctx context.Context, circleID string, isInviteLinkEnabled bool) error {
+	_, err := r.db.ExecContext(ctx, QueryUpdateCircleSettings, isInviteLinkEnabled, circleID)
+	return err
+}
+
+func (r *circleRepository) CreateInviteLink(ctx context.Context, link *models.CircleInviteLink) error {
+	_, err := r.db.ExecContext(ctx, QueryCreateInviteLink, link.ID, link.CircleID, link.Code, link.MaxUses, link.UsedCount, link.ExpiresAt, link.CreatedAt, link.CreatorID)
+	return err
+}
+
+func (r *circleRepository) GetInviteLinkByCode(ctx context.Context, code string) (*models.CircleInviteLink, error) {
+	var link models.CircleInviteLink
+	err := r.db.GetContext(ctx, &link, QueryGetInviteLinkByCode, code)
+	if err != nil {
+		return nil, err
+	}
+	return &link, nil
+}
+
+func (r *circleRepository) GetInviteLinks(ctx context.Context, circleID string) ([]models.CircleInviteLink, error) {
+	var links []models.CircleInviteLink
+	err := r.db.SelectContext(ctx, &links, QueryGetInviteLinks, circleID)
+	if err != nil {
+		return nil, err
+	}
+	if links == nil {
+		links = []models.CircleInviteLink{}
+	}
+	return links, nil
+}
+
+func (r *circleRepository) DeleteInviteLink(ctx context.Context, linkID string) error {
+	_, err := r.db.ExecContext(ctx, QueryDeleteInviteLink, linkID)
+	return err
+}
+
+func (r *circleRepository) IncrementInviteLinkUsage(ctx context.Context, linkID string) error {
+	_, err := r.db.ExecContext(ctx, QueryIncrementInviteLinkUsage, linkID)
+	return err
 }
 
 
