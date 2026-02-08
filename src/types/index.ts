@@ -103,3 +103,33 @@ export interface CirclePreview extends Circle {
     members: number;
   };
 }
+
+// User Profile Types
+
+export interface UserStats {
+  circlesOwned: number;
+  circlesJoined: number;
+  eventsCreated: number;
+  eventsAttended: number;
+  rsvpResponseRate: number;
+  postsShared: number;
+}
+
+export interface UserProfile extends User {
+  bio?: string;
+  profileVisibility?: "PUBLIC" | "PRIVATE" | "CIRCLES_ONLY";
+  notificationPreferences?: string;
+  createdAt?: string;
+}
+
+export interface UserProfileResponse {
+  id: string;
+  name?: string;
+  email?: string;
+  image?: string;
+  bio?: string;
+  profileVisibility?: "PUBLIC" | "PRIVATE" | "CIRCLES_ONLY";
+  notificationPreferences?: string;
+  createdAt?: string;
+  stats: UserStats;
+}

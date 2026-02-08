@@ -403,7 +403,7 @@ export default async function Home() {
 								{session.user.email}
 							</p>
 						</div>
-						<div className="w-10 h-10 rounded-full bg-secondary border border-border overflow-hidden relative">
+						<Link href="/profile" className="w-10 h-10 rounded-full bg-secondary border border-border overflow-hidden relative hover:ring-2 hover:ring-primary transition-all">
 							{session.user.image ? (
 								<Image
 									src={session.user.image}
@@ -418,7 +418,7 @@ export default async function Home() {
 									</span>
 								</div>
 							)}
-						</div>
+						</Link>
 						<SignOutButton
 							signOutAction={async () => {
 								"use server";
