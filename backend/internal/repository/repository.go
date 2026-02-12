@@ -8,6 +8,7 @@ type Repository struct {
 	Feed    FeedRepository
 	Auth    AuthRepository
 	User    UserRepository
+	Media   MediaRepository
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -17,5 +18,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Feed:    NewFeedRepository(db),
 		Auth:    NewAuthRepository(db),
 		User:    NewUserRepository(db),
+		Media:   NewMediaRepository(db),
 	}
 }

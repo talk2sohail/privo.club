@@ -11,6 +11,9 @@ type Handler func(w http.ResponseWriter, r *http.Request) error
 
 // ServeHTTP implements the http.Handler interface for Handler
 func (fn Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Set Content-Type to application/json for all API responses
+	w.Header().Set("Content-Type", "application/json")
+
 	if err := fn(w, r); err != nil {
 		// Default to 500
 		code := http.StatusInternalServerError

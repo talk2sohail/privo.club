@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { RsvpButtons } from "@/components/events/rsvp-buttons";
 import { PostUpdateDialog } from "@/components/events/post-update-dialog";
 import { EventSettingsMenu } from "@/components/events/EventSettingsMenu";
+import { MemoryVault } from "@/components/events/MemoryVault";
 
 interface EventPageProps {
   params: Promise<{ id: string }>;
@@ -319,22 +320,7 @@ export default async function EventPage({ params }: EventPageProps) {
                 </CardContent>
               </Card>
 
-              <div className="glass p-8 rounded-[2.5rem] border-white/10 bg-linear-to-br from-blue-500/10 to-purple-500/10 items-center justify-center flex flex-col text-center shadow-lg hover:bg-white/10 transition-colors">
-                <ImageIcon className="w-12 h-12 text-blue-500/50 mb-4 animate-pulse" />
-                <h4 className="font-bold text-lg mb-2">Media Vault</h4>
-                <p className="text-[11px] text-muted-foreground mb-6 font-medium uppercase tracking-[0.2em]">
-                  Live Gallery Shared with Guests
-                </p>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full rounded-2xl border-white/10 glass text-xs py-6 group"
-                  disabled
-                >
-                  <Clock className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                  Opens at Event Start
-                </Button>
-              </div>
+              <MemoryVault invite={invite} />
 
               <div className="p-4 text-center">
                 <p className="text-[10px] text-muted-foreground font-medium">

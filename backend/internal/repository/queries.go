@@ -72,12 +72,12 @@ const (
 
 	// Invite Queries
 	QueryCreateInvite = `
-		INSERT INTO "Invite" (id, title, description, location, "eventDate", "senderId", "circleId", "createdAt", "updatedAt")
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO "Invite" (id, title, description, location, "eventDate", "senderId", "circleId", "isVaultUnlocked", "vaultUnlockDate", "createdAt", "updatedAt")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 	QueryListInvites = `
 		SELECT DISTINCT
-			i.id, i.title, i.description, i.location, i."eventDate", i."senderId", i."circleId", i."createdAt", i."updatedAt",
+			i.id, i.title, i.description, i.location, i."eventDate", i."senderId", i."circleId", i."isVaultUnlocked", i."vaultUnlockDate", i."createdAt", i."updatedAt",
 			sender.id as sender_id, sender.name as sender_name, sender.email as sender_email, sender.image as sender_image,
 			circle.id as circle_id, circle.name as circle_name,
 			(SELECT count(*)::int FROM "RSVP" WHERE "inviteId" = i.id) as rsvp_count
@@ -88,10 +88,15 @@ const (
 		WHERE i."senderId" = $1 OR cm."userId" = $1
 		ORDER BY i."eventDate" ASC
 	`
-	QueryGetInviteByID = `SELECT * FROM "Invite" WHERE id = $1`
-	QueryGetSenderID   = `SELECT "senderId" FROM "Invite" WHERE id = $1`
-	QueryDeleteInvite  = `DELETE FROM "Invite" WHERE id = $1`
-	QueryUpsertRSVP    = `
+	QueryGetInviteByID     = `SELECT * FROM "Invite" WHERE id = $1`
+	QueryGetSenderID       = `SELECT "senderId" FROM "Invite" WHERE id = $1`
+	QueryDeleteInvite      = `DELETE FROM "Invite" WHERE id = $1`
+	QueryUpdateVaultStatus = `
+		UPDATE "Invite" 
+		SET "isVaultUnlocked" = $2, "vaultUnlockDate" = $3, "updatedAt" = NOW() 
+		WHERE id = $1
+	`
+	QueryUpsertRSVP = `
         INSERT INTO "RSVP" (id, "inviteId", "userId", status, "guestCount", dietary, note, "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         ON CONFLICT ("inviteId", "userId") DO UPDATE SET
@@ -135,4 +140,10 @@ const (
         WHERE "inviteId" = $1 
         ORDER BY "createdAt" DESC
     `
+
+	// Media Queries
+	QueryCreateMedia = `
+		INSERT INTO "MediaItem" (id, "inviteId", "userId", url, type, caption, "createdAt")
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`
 )

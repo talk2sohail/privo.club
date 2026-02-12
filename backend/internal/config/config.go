@@ -13,6 +13,7 @@ type Config struct {
 	Port           string
 	Environment    string
 	LogFilePath    string
+	AllowedOrigin  string
 }
 
 func Load() *Config {
@@ -43,11 +44,17 @@ func Load() *Config {
 		env = "development"
 	}
 
+	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
+	if allowedOrigin == "" {
+		allowedOrigin = "http://localhost:3000"
+	}
+
 	return &Config{
 		DatabaseURL:    dbURL,
 		NextAuthSecret: secret,
 		Port:           port,
 		Environment:    env,
 		LogFilePath:    os.Getenv("LOG_FILE_PATH"),
+		AllowedOrigin:  allowedOrigin,
 	}
 }

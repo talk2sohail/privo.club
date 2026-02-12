@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"log"
+	"time"
 
 	"privo-club-backend/internal/models"
 
@@ -17,8 +18,13 @@ func NewInviteRepository(db *sqlx.DB) InviteRepository {
 	return &inviteRepository{db: db}
 }
 
+func (r *inviteRepository) UpdateVaultStatus(ctx context.Context, inviteID string, isUnlocked bool, unlockDate time.Time) error {
+	_, err := r.db.ExecContext(ctx, QueryUpdateVaultStatus, inviteID, isUnlocked, unlockDate)
+	return err
+}
+
 func (r *inviteRepository) CreateInvite(ctx context.Context, invite *models.Invite) error {
-	_, err := r.db.ExecContext(ctx, QueryCreateInvite, invite.ID, invite.Title, invite.Description, invite.Location, invite.EventDate, invite.SenderID, invite.CircleID, invite.CreatedAt, invite.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, QueryCreateInvite, invite.ID, invite.Title, invite.Description, invite.Location, invite.EventDate, invite.SenderID, invite.CircleID, invite.IsVaultUnlocked, invite.VaultUnlockDate, invite.CreatedAt, invite.UpdatedAt)
 	return err
 }
 

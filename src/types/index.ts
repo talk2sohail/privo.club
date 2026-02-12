@@ -25,6 +25,8 @@ export interface Invite {
   eventDate: string; // ISO string
   senderId: string;
   circleId?: string;
+  isVaultUnlocked: boolean;
+  vaultUnlockDate?: string; // ISO string
   createdAt: string;
   updatedAt: string;
 }
@@ -52,6 +54,7 @@ export interface MediaItem {
   inviteId: string;
   url: string;
   type: "IMAGE" | "VIDEO";
+  caption?: string;
   createdAt: string;
 }
 

@@ -158,6 +158,24 @@ func (h *InvitesHandler) GetInvite(w http.ResponseWriter, r *http.Request) error
 		return api.ErrNotFound("Invite not found")
 	}
 
+	// Lazy Unlock Check
+	// If vault is locked AND 24h have passed since event start
+	if !details.Invite.IsVaultUnlocked {
+		unlockTime := details.Invite.EventDate.Add(24 * time.Hour)
+		if time.Now().After(unlockTime) {
+			// Unlock it
+			if err := h.Repo.UpdateVaultStatus(r.Context(), inviteID, true, unlockTime); err != nil {
+				// Log error but proceed with returning the (technically locked) invite
+				// In a real app, use a logger
+				println("Failed to update vault status:", err.Error())
+			} else {
+				// Update in-memory response
+				details.Invite.IsVaultUnlocked = true
+				details.Invite.VaultUnlockDate = &unlockTime
+			}
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	return json.NewEncoder(w).Encode(details)
 }

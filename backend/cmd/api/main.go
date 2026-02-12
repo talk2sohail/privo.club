@@ -28,6 +28,7 @@ func main() {
 	r.Use(customMiddleware.NewLogger(cfg.LogFilePath))
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Heartbeat("/ping"))
+	r.Use(customMiddleware.Cors(cfg.AllowedOrigin))
 
 	authMiddleware := auth.Middleware(cfg)
 
@@ -42,6 +43,7 @@ func main() {
 	invitesHandler := handlers.NewInvitesHandler(repo.Invites)
 	feedHandler := handlers.NewFeedHandler(repo.Feed)
 	userHandler := handlers.NewUserHandler(repo.User)
+	mediaHandler := handlers.NewMediaHandler(repo.Media)
 
 	// Circles Routes (Mixed Public/Protected)
 	r.Route("/api/circles", func(r chi.Router) {
@@ -63,11 +65,25 @@ func main() {
 		r.Route("/api/invites", invitesHandler.RegisterRoutes)
 		r.Route("/api/feed", feedHandler.RegisterRoutes)
 		r.Route("/api/users", userHandler.RegisterRoutes)
+		r.Route("/api/media", mediaHandler.RegisterRoutes)
 	})
+
+	// Static File Server
+	fileServer(r, "/uploads", "./uploads")
 
 	slog.Info("Starting server", "port", cfg.Port)
 	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {
 		slog.Error("Server failed", "error", err)
 		os.Exit(1)
 	}
+}
+
+func fileServer(r chi.Router, path string, root string) {
+	if _, err := os.Stat(root); os.IsNotExist(err) {
+		os.Mkdir(root, 0755)
+	}
+	fs := http.StripPrefix(path, http.FileServer(http.Dir(root)))
+	r.Get(path+"/*", func(w http.ResponseWriter, r *http.Request) {
+		fs.ServeHTTP(w, r)
+	})
 }
