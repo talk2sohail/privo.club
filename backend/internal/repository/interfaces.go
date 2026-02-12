@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"privo-club-backend/internal/models"
+	"time"
 )
 
 type CircleRepository interface {
@@ -31,6 +32,7 @@ type InviteRepository interface {
 	DeleteInvite(ctx context.Context, inviteID string) error
 	UpsertRSVP(ctx context.Context, rsvp *models.RSVP) error
 	GetInviteDetails(ctx context.Context, inviteID string) (*models.InviteDetails, error)
+	UpdateVaultStatus(ctx context.Context, inviteID string, isUnlocked bool, unlockDate time.Time) error
 }
 
 type FeedRepository interface {
@@ -46,4 +48,8 @@ type UserRepository interface {
 	GetUserByID(ctx context.Context, userID string) (*models.User, error)
 	GetUserStats(ctx context.Context, userID string) (*models.UserStats, error)
 	UpdateProfile(ctx context.Context, userID string, req *models.UpdateProfileRequest) error
+}
+
+type MediaRepository interface {
+	CreateMedia(ctx context.Context, media *models.MediaItem) error
 }

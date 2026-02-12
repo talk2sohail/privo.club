@@ -117,18 +117,23 @@ func checkStatus(db *sql.DB) error {
 	return nil
 }
 
+// runMigrations applies all unapplied migrations in the "migrations" directory.
+// It checks the schema_migrations table to see which migrations have already been applied.
+// If a migration hasn't been applied, it runs it and records the result in the database.
 func runMigrations(db *sql.DB) error {
 	files, err := filepath.Glob("migrations/*.up.sql")
 	if err != nil {
 		return fmt.Errorf("failed to read migrations directory: %w", err)
 	}
+
+	// Sort migrations alphabetically to ensure they're applied in order
 	sort.Strings(files)
 
 	for _, file := range files {
 		filename := filepath.Base(file)
 		name := strings.TrimSuffix(filename, ".up.sql")
 
-		// Check if applied (and not rolled back)
+		// Check if the migration has already been applied (and not rolled back)
 		var id int
 		var rolledBackAt *time.Time
 		err := db.QueryRow("SELECT id, rolled_back_at FROM schema_migrations WHERE migration_name = $1", name).Scan(&id, &rolledBackAt)

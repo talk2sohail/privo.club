@@ -33,29 +33,32 @@ Privo.club is a privacy-focused social event platform that helps you organize an
 
 ## ✨ Features
 
-- **🔒 Private Circles**: Create invite-only social groups (hives) for different occasions
-- **📨 Beautiful Invitations**: Send customizable event invitations with RSVP tracking
-- **📱 Progressive Web App**: Install on any device with offline support
-- **💬 Event Feed**: Share updates, photos, and memories after events
-- **👥 Member Management**: Approve/reject member requests and manage permissions
-- **🎨 Modern UI**: Beautiful, responsive design with Tailwind CSS v4 and shadcn/ui
+- **🔒 Private Circles**: Create invite-only social groups (hives) for different occasions.
+- **📨 Beautiful Invitations**: Send customizable event invitations with RSVP tracking.
+- **📱 Progressive Web App (PWA)**: Installable on any device with offline capabilities via `@serwist/next`.
+- **💬 Event Feed**: Share updates, photos, and memories within specific event contexts.
+- **👥 Member Management**: Granular control over circle members with approval workflows.
+- **🎨 Modern UI/UX**: Premium aesthetic using Tailwind CSS v4, shadcn/ui, and framer-motion animations.
+- **👤 User Profiles**: customizable profiles with privacy controls (Public, Private, Circles Only).
 
 ## 🚀 Tech Stack
 
-### Frontend
-
-- **Framework**: Next.js 16 (App Router)
+### Frontend (User Interface)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 + shadcn/ui
-- **Authentication**: NextAuth.js v5 (Google, GitHub OAuth)
-- **PWA**: Serwist for service workers
+- **Styling**: Tailwind CSS v4 + [shadcn/ui](https://ui.shadcn.com/)
+- **State Management**: Server Actions + React Hooks
+- **Authentication**: [NextAuth.js v5](https://authjs.dev/) (Google, GitHub OAuth)
+- **PWA**: `@serwist/next` for service worker management
+- **Icons**: Lucide React
 
-### Backend
-
-- **Language**: Go 1.25+
-- **Router**: Chi
-- **Database**: PostgreSQL with manual migrations
-- **Auth**: JWT validation synchronized with NextAuth
+### Backend (API & Business Logic)
+- **Language**: [Go 1.25+](https://go.dev/)
+- **Router**: [Chi Router](https://github.com/go-chi/chi) v5
+- **Database Access**: `sqlx` for type-safe SQL execution
+- **Database**: PostgreSQL 14+
+- **Migrations**: Manual SQL migrations (managed via `make migrate`)
+- **Authentication**: JWT validation synced with frontend session via usage of shared secrets
 
 ## 📋 Prerequisites
 
@@ -78,11 +81,16 @@ cd invito
 Create a `.env` file in the root directory:
 
 ```env
+# Database
 DATABASE_URL=postgresql://user:password@localhost:5432/privo
+
+# Auth Configuration (Shared between Frontend & Backend)
 AUTH_SECRET=your-random-secret-here
 AUTH_TRUST_HOST=true
-BACKEND_URL=http://localhost:8080/api
 NEXTAUTH_URL=http://localhost:3000
+
+# Backend Connection
+BACKEND_URL=http://localhost:8080/api
 
 # OAuth Providers
 AUTH_GOOGLE_ID=your-google-client-id
@@ -94,13 +102,11 @@ AUTH_GITHUB_SECRET=your-github-client-secret
 ### 3. Install dependencies and run migrations
 
 **Frontend:**
-
 ```bash
 npm install
 ```
 
 **Backend:**
-
 ```bash
 cd backend
 go mod download
@@ -110,13 +116,11 @@ make migrate
 ### 4. Start the development servers
 
 **Terminal 1 - Frontend:**
-
 ```bash
 npm run dev
 ```
 
 **Terminal 2 - Backend:**
-
 ```bash
 cd backend
 make run
@@ -124,39 +128,28 @@ make run
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-## 🧪 Running Tests
+## 🧪 Running Tests & Tools
 
 **Frontend:**
-
 ```bash
-npm run lint
-npm run type-check
+npm run lint         # Run linter
+npm run type-check   # Run TypeScript check
 ```
 
 **Backend:**
-
 ```bash
 cd backend
-make test
-make coverage  # Opens HTML coverage report
+make test            # Run unit tests
+make coverage        # Generate and view coverage report
+make migrate-status  # Check migration status
+make build           # Build production binary
 ```
 
-## 📦 Building for Production
+## 📦 Architecture Highlights
 
-**Frontend:**
-
-```bash
-npm run build
-npm start
-```
-
-**Backend:**
-
-```bash
-cd backend
-make build
-./bin/api
-```
+- **Hybrid Architecture**: Next.js serves as the frontend UI layer and proxy, while the heavy business logic and data persistence reside in the high-performance Go backend.
+- **Manual Migrations**: Database schema changes are strictly managed via raw SQL files in `backend/migrations` for maximum control.
+- **Unified Auth**: The frontend handles OAuth flows via NextAuth v5, extracting a session token which is validated by the Go backend for protected resources.
 
 ## 🤝 Contributing
 

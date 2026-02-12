@@ -40,15 +40,17 @@ type CircleMember struct {
 
 // Invite mirrors the Invite model in Prisma
 type Invite struct {
-	ID          string    `db:"id" json:"id"`
-	Title       string    `db:"title" json:"title"`
-	Description *string   `db:"description" json:"description,omitempty"`
-	Location    *string   `db:"location" json:"location,omitempty"`
-	EventDate   time.Time `db:"eventDate" json:"eventDate"`
-	SenderID    string    `db:"senderId" json:"senderId"`
-	CircleID    *string   `db:"circleId" json:"circleId,omitempty"`
-	CreatedAt   time.Time `db:"createdAt" json:"createdAt"`
-	UpdatedAt   time.Time `db:"updatedAt" json:"updatedAt"`
+	ID              string     `db:"id" json:"id"`
+	Title           string     `db:"title" json:"title"`
+	Description     *string    `db:"description" json:"description,omitempty"`
+	Location        *string    `db:"location" json:"location,omitempty"`
+	EventDate       time.Time  `db:"eventDate" json:"eventDate"`
+	SenderID        string     `db:"senderId" json:"senderId"`
+	CircleID        *string    `db:"circleId" json:"circleId,omitempty"`
+	IsVaultUnlocked bool       `db:"isVaultUnlocked" json:"isVaultUnlocked"`
+	VaultUnlockDate *time.Time `db:"vaultUnlockDate" json:"vaultUnlockDate,omitempty"`
+	CreatedAt       time.Time  `db:"createdAt" json:"createdAt"`
+	UpdatedAt       time.Time  `db:"updatedAt" json:"updatedAt"`
 }
 
 // RSVP mirrors the RSVP model in Prisma
