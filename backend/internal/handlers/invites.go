@@ -45,6 +45,12 @@ func (h *InvitesHandler) CreateInvite(w http.ResponseWriter, r *http.Request) er
 		return api.ErrBadRequest("Title, event date are required")
 	}
 
+	// Validate that the event date is not in the past
+	// We allow a small 5-minute buffer to account for potential clock skew between client and server
+	if req.EventDate.Before(time.Now().Add(-5 * time.Minute)) {
+		return api.ErrBadRequest("Event date cannot be in the past")
+	}
+
 	inviteID := utils.GenerateID("invite")
 	invite := &models.Invite{
 		ID:          inviteID,
