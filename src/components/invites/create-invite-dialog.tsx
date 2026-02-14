@@ -1,42 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { createInvite } from "@/app/actions/invites";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+import { StepDetails } from "./invite-wizard/step-details";
+import { StepSchedule } from "./invite-wizard/step-schedule";
+import { StepPreview } from "./invite-wizard/step-preview";
+import { WizardProgress } from "./invite-wizard/wizard-progress";
+import { WizardFooter } from "./invite-wizard/wizard-footer";
 
 interface CreateInviteDialogProps {
 	circles: { id: string; name: string }[];
 	defaultCircleId?: string;
 	children?: React.ReactNode;
+}
+
+type Step = 1 | 2 | 3;
+
+interface LocationSuggestion {
+	name: string;
+	city?: string;
+	country?: string;
+	osm_id: number;
 }
 
 export function CreateInviteDialog({
@@ -45,32 +41,88 @@ export function CreateInviteDialog({
 	children,
 }: CreateInviteDialogProps) {
 	const [open, setOpen] = useState(false);
+	const [step, setStep] = useState<Step>(1);
 	const [loading, setLoading] = useState(false);
 	const [date, setDate] = useState<Date>();
+	const [time, setTime] = useState("19:00");
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
+	const [location, setLocation] = useState("");
 	const [selectedCircleId, setSelectedCircleId] = useState<string>(
 		defaultCircleId ?? "",
 	);
+	
+	const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
+	const [showSuggestions, setShowSuggestions] = useState(false);
+
 	const router = useRouter();
 
-	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
+	const nextStep = () => {
+		if (step === 1 && !title) {
+			toast.error("Please enter a title");
+			return;
+		}
+		if (step === 2 && !date) {
+			toast.error("Please select a date");
+			return;
+		}
+		setStep((s: number) => (s + 1) as Step);
+	};
+	const prevStep = () => setStep((s: number) => (s - 1) as Step);
+
+	// Location Autocomplete Logic
+	useEffect(() => {
+		const fetchSuggestions = async () => {
+			if (location.length < 3) {
+				setSuggestions([]);
+				return;
+			}
+			try {
+				const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(location)}&limit=5`);
+				const data = await res.json();
+				const formatted = data.features.map((f: any) => ({
+					name: f.properties.name || f.properties.street,
+					city: f.properties.city || f.properties.state,
+					country: f.properties.country,
+					osm_id: f.properties.osm_id
+				}));
+				setSuggestions(formatted);
+				setShowSuggestions(true);
+			} catch (err) {
+				console.error("Photon API error:", err);
+			}
+		};
+
+		const timer = setTimeout(fetchSuggestions, 300);
+		return () => clearTimeout(timer);
+	}, [location]);
+
+	async function handleSubmit() {
 		if (!date) {
 			toast.error("Please select an event date");
 			return;
 		}
 
 		setLoading(true);
-		const formData = new FormData(event.currentTarget);
-		formData.append("eventDate", date.toISOString());
-		// circleId is handled by the hidden input
+		
+		const [hours, minutes] = time.split(":").map(Number);
+		const finalDate = new Date(date);
+		finalDate.setHours(hours, minutes);
+
+		const formData = new FormData();
+		formData.append("title", title);
+		formData.append("description", description);
+		formData.append("location", location);
+		formData.append("eventDate", finalDate.toISOString());
+		formData.append("circleId", selectedCircleId);
 
 		try {
 			await createInvite(formData);
-			toast.success("Invite sent successfully!");
+			toast.success("Invite created successfully!");
 			setOpen(false);
+			setStep(1);
+			resetForm();
 			router.refresh();
-			// Optional: redirect to invite page
-			// router.push(`/event/${invite.id}`)
 		} catch {
 			toast.error("Failed to create invite. Please try again.");
 		} finally {
@@ -78,8 +130,34 @@ export function CreateInviteDialog({
 		}
 	}
 
+	const resetForm = () => {
+		setTitle("");
+		setDescription("");
+		setLocation("");
+		setDate(undefined);
+		setTime("19:00");
+		setSelectedCircleId(defaultCircleId ?? "");
+	};
+
+	const selectedCircleName = circles.find(c => c.id === selectedCircleId)?.name || "Select Circle";
+
+	const [coverImage, setCoverImage] = useState("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80");
+
+	const covers = [
+		"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
+		"https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+		"https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=800&q=80",
+		"https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
+		"https://images.unsplash.com/photo-1514525253361-b83f859b73c0?w=800&q=80",
+	];
+
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
+		<Dialog open={open} onOpenChange={(val) => {
+			setOpen(val);
+			if (!val) {
+				setStep(1);
+			}
+		}}>
 			<DialogTrigger asChild>
 				{children ? (
 					children
@@ -93,117 +171,61 @@ export function CreateInviteDialog({
 					</Button>
 				)}
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[480px] glass border-white/20 text-foreground backdrop-blur-3xl overflow-y-auto max-h-[90vh]">
-				<DialogHeader>
-					<DialogTitle className="text-2xl font-bold">
-						Create New Invite
-					</DialogTitle>
-					<DialogDescription className="text-muted-foreground">
-						Fill in the details for your special occasion.
-					</DialogDescription>
-				</DialogHeader>
-				<form onSubmit={handleSubmit} className="space-y-6 pt-4">
-					<input type="hidden" name="circleId" value={selectedCircleId} />
-					<div className="space-y-2">
-						<Label htmlFor="title" className="text-sm font-semibold">
-							Event Title
-						</Label>
-						<Input
-							id="title"
-							name="title"
-							placeholder="e.g., Sarah's Birthday Dinner"
-							required
-							className="h-12 border-white/10 bg-white/5 focus-visible:ring-primary"
+			<DialogContent className="sm:max-w-[550px] p-0 overflow-hidden glass border-white/20 text-foreground backdrop-blur-3xl">
+				<div className="flex flex-col h-[540px]">
+					<WizardProgress step={step} />
+
+					<div className="flex-1 relative mt-2 overflow-hidden">
+						<StepDetails
+							step={step}
+							title={title}
+							onTitleChange={setTitle}
+							description={description}
+							onDescriptionChange={setDescription}
+							circles={circles}
+							selectedCircleId={selectedCircleId}
+							onCircleChange={setSelectedCircleId}
+							disabledCircleSelection={!!defaultCircleId}
+						/>
+
+						<StepSchedule
+							step={step}
+							date={date}
+							onDateChange={setDate}
+							time={time}
+							onTimeChange={setTime}
+							location={location}
+							onLocationChange={setLocation}
+							suggestions={suggestions}
+							showSuggestions={showSuggestions}
+							onSelectSuggestion={(s) => {
+								setLocation(s.name + (s.city ? `, ${s.city}` : ""));
+								setShowSuggestions(false);
+							}}
+							onFocusLocation={() => setShowSuggestions(true)}
+						/>
+
+						<StepPreview
+							step={step}
+							title={title}
+							date={date}
+							time={time}
+							location={location}
+							selectedCircleName={selectedCircleName}
+							coverImage={coverImage}
+							onCoverImageChange={setCoverImage}
+							covers={covers}
 						/>
 					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label className="text-sm font-semibold">Date</Label>
-							<Popover>
-								<PopoverTrigger asChild>
-									<Button
-										variant={"outline"}
-										className={cn(
-											"w-full h-12 justify-start text-left font-normal border-white/10 bg-white/5 hover:bg-white/10 transition-all",
-											!date && "text-muted-foreground",
-										)}
-									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
-										{date ? format(date, "PPP") : <span>Pick a date</span>}
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0 glass border-white/20 backdrop-blur-3xl">
-									<Calendar
-										mode="single"
-										selected={date}
-										onSelect={setDate}
-										initialFocus
-										className="bg-transparent"
-									/>
-								</PopoverContent>
-							</Popover>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="circleId" className="text-sm font-semibold">
-								Send to Hive
-							</Label>
-
-							<Select
-								value={selectedCircleId}
-								onValueChange={setSelectedCircleId}
-								disabled={!!defaultCircleId}
-							>
-								<SelectTrigger className="h-12 border-white/10 bg-white/5 hover:bg-white/10 transition-all">
-									<SelectValue placeholder="Select a hive" />
-								</SelectTrigger>
-
-								<SelectContent className="glass border-white/20 backdrop-blur-3xl">
-									{circles.map((circle) => (
-										<SelectItem key={circle.id} value={circle.id}>
-											{circle.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="location" className="text-sm font-semibold">
-							Location
-						</Label>
-						<Input
-							id="location"
-							name="location"
-							placeholder="e.g., Central Park, NYC"
-							className="h-12 border-white/10 bg-white/5 focus-visible:ring-primary"
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="description" className="text-sm font-semibold">
-							Description
-						</Label>
-						<Input
-							id="description"
-							name="description"
-							placeholder="Tell them more about the event..."
-							className="h-12 border-white/10 bg-white/5 focus-visible:ring-primary"
-						/>
-					</div>
-
-					<DialogFooter className="pt-4">
-						<Button
-							type="submit"
-							disabled={loading}
-							className="w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
-						>
-							{loading ? "Creating..." : "Send Invitations"}
-						</Button>
-					</DialogFooter>
-				</form>
+					<WizardFooter
+						step={step}
+						loading={loading}
+						onBack={prevStep}
+						onNext={nextStep}
+						onSubmit={handleSubmit}
+					/>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
