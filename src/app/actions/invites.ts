@@ -82,3 +82,16 @@ export async function getMyInvites(): Promise<Invite[]> {
     return [];
   }
 }
+
+export async function updateInvite(inviteId: string, location?: string, mapLink?: string) {
+  const result = await fetchFromBackend(`/invites/${inviteId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      location,
+      mapLink
+    })
+  });
+
+  revalidatePath(`/event/${inviteId}`);
+  return result;
+}

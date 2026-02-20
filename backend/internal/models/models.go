@@ -47,6 +47,7 @@ type Invite struct {
 	EventDate       time.Time  `db:"eventDate" json:"eventDate"`
 	SenderID        string     `db:"senderId" json:"senderId"`
 	CircleID        *string    `db:"circleId" json:"circleId,omitempty"`
+	MapLink         *string    `db:"map_link" json:"mapLink,omitempty"`
 	IsVaultUnlocked bool       `db:"isVaultUnlocked" json:"isVaultUnlocked"`
 	VaultUnlockDate *time.Time `db:"vaultUnlockDate" json:"vaultUnlockDate,omitempty"`
 	CreatedAt       time.Time  `db:"createdAt" json:"createdAt"`
@@ -169,6 +170,7 @@ type CreateInviteRequest struct {
 	Location    *string   `json:"location"`
 	EventDate   time.Time `json:"eventDate"`
 	CircleID    *string   `json:"circleId"`
+	MapLink     *string   `json:"mapLink"`
 }
 
 type RSVPRequest struct {

@@ -1,0 +1,1 @@
+ALTER TABLE "Invite" ADD COLUMN "map_link" TEXT;

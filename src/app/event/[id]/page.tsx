@@ -74,7 +74,12 @@ export default async function EventPage({ params }: EventPageProps) {
               <Share2 className="w-5 h-5" />
             </Button>
             {isOwner && (
-                <EventSettingsMenu inviteId={invite.id} inviteTitle={invite.title} />
+                <EventSettingsMenu 
+                  inviteId={invite.id} 
+                  inviteTitle={invite.title}
+                  currentLocation={invite.location || ""}
+                  currentMapLink={invite.mapLink}
+                />
             )}
           </div>
         </nav>
@@ -132,9 +137,21 @@ export default async function EventPage({ params }: EventPageProps) {
                       <MapPin className="w-6 h-6 text-blue-500" />
                     </div>
                     <div>
-                      <p className="font-bold text-lg">
-                        {invite.location || "Online / TBD"}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <p className="font-bold text-lg">
+                          {invite.location || "Online / TBD"}
+                        </p>
+                        {invite.mapLink && (
+                          <a 
+                            href={invite.mapLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-lg font-bold uppercase tracking-wider hover:bg-blue-500/30 transition-colors"
+                          >
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
                       <p className="text-muted-foreground">
                         Location details for guests
                       </p>

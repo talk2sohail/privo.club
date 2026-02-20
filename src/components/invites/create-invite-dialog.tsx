@@ -28,13 +28,6 @@ interface CreateInviteDialogProps {
 
 type Step = 1 | 2 | 3;
 
-interface LocationSuggestion {
-	name: string;
-	city?: string;
-	country?: string;
-	osm_id: number;
-}
-
 export function CreateInviteDialog({
 	circles,
 	defaultCircleId,
@@ -52,9 +45,6 @@ export function CreateInviteDialog({
 		defaultCircleId ?? "",
 	);
 	
-	const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
-	const [showSuggestions, setShowSuggestions] = useState(false);
-
 	const router = useRouter();
 
 	const nextStep = () => {
@@ -69,33 +59,6 @@ export function CreateInviteDialog({
 		setStep((s: number) => (s + 1) as Step);
 	};
 	const prevStep = () => setStep((s: number) => (s - 1) as Step);
-
-	// Location Autocomplete Logic
-	useEffect(() => {
-		const fetchSuggestions = async () => {
-			if (location.length < 3) {
-				setSuggestions([]);
-				return;
-			}
-			try {
-				const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(location)}&limit=5`);
-				const data = await res.json();
-				const formatted = data.features.map((f: any) => ({
-					name: f.properties.name || f.properties.street,
-					city: f.properties.city || f.properties.state,
-					country: f.properties.country,
-					osm_id: f.properties.osm_id
-				}));
-				setSuggestions(formatted);
-				setShowSuggestions(true);
-			} catch (err) {
-				console.error("Photon API error:", err);
-			}
-		};
-
-		const timer = setTimeout(fetchSuggestions, 300);
-		return () => clearTimeout(timer);
-	}, [location]);
 
 	async function handleSubmit() {
 		if (!date) {
@@ -196,13 +159,6 @@ export function CreateInviteDialog({
 							onTimeChange={setTime}
 							location={location}
 							onLocationChange={setLocation}
-							suggestions={suggestions}
-							showSuggestions={showSuggestions}
-							onSelectSuggestion={(s) => {
-								setLocation(s.name + (s.city ? `, ${s.city}` : ""));
-								setShowSuggestions(false);
-							}}
-							onFocusLocation={() => setShowSuggestions(true)}
 						/>
 
 						<StepPreview

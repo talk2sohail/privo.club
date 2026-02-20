@@ -25,6 +25,7 @@ export interface Invite {
   eventDate: string; // ISO string
   senderId: string;
   circleId?: string;
+  mapLink?: string;
   isVaultUnlocked: boolean;
   vaultUnlockDate?: string; // ISO string
   createdAt: string;
