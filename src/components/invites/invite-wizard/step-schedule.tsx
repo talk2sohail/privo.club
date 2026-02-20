@@ -13,13 +13,6 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-interface LocationSuggestion {
-	name: string;
-	city?: string;
-	country?: string;
-	osm_id: number;
-}
-
 interface StepScheduleProps {
 	step: number;
 	date: Date | undefined;
@@ -28,10 +21,6 @@ interface StepScheduleProps {
 	onTimeChange: (time: string) => void;
 	location: string;
 	onLocationChange: (val: string) => void;
-	suggestions: LocationSuggestion[];
-	showSuggestions: boolean;
-	onSelectSuggestion: (s: LocationSuggestion) => void;
-	onFocusLocation: () => void;
 }
 
 export function StepSchedule({
@@ -42,10 +31,6 @@ export function StepSchedule({
 	onTimeChange,
 	location,
 	onLocationChange,
-	suggestions,
-	showSuggestions,
-	onSelectSuggestion,
-	onFocusLocation,
 }: StepScheduleProps) {
 	return (
 		<div className={cn(
@@ -105,29 +90,10 @@ export function StepSchedule({
 						id="location"
 						value={location}
 						onChange={(e) => onLocationChange(e.target.value)}
-						onFocus={onFocusLocation}
 						placeholder="e.g., Central Park, NYC"
 						className="h-12 pl-10 border-white/10 bg-white/5 focus-visible:ring-primary rounded-xl"
 					/>
 				</div>
-				
-				{showSuggestions && suggestions.length > 0 && (
-					<div className="absolute top-full left-0 right-0 mt-2 z-50 glass border-white/20 rounded-xl overflow-hidden shadow-2xl backdrop-blur-3xl animate-in fade-in slide-in-from-top-2 duration-200">
-						{suggestions.map((s, i) => (
-							<button
-								key={`${s.osm_id}-${i}`}
-								className="w-full h-12 px-4 text-left hover:bg-white/10 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0"
-								onClick={() => onSelectSuggestion(s)}
-							>
-								<MapPin className="w-4 h-4 text-primary shrink-0" />
-								<div className="truncate">
-									<span className="font-semibold text-sm block truncate">{s.name}</span>
-									{s.city && <span className="text-[11px] text-muted-foreground">{s.city}, {s.country}</span>}
-								</div>
-							</button>
-						))}
-					</div>
-				)}
 			</div>
 		</div>
 	);

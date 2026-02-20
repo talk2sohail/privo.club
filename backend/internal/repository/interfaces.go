@@ -33,6 +33,7 @@ type InviteRepository interface {
 	UpsertRSVP(ctx context.Context, rsvp *models.RSVP) error
 	GetInviteDetails(ctx context.Context, inviteID string) (*models.InviteDetails, error)
 	UpdateVaultStatus(ctx context.Context, inviteID string, isUnlocked bool, unlockDate time.Time) error
+	UpdateInvite(ctx context.Context, inviteID string, location, mapLink *string) error
 }
 
 type FeedRepository interface {

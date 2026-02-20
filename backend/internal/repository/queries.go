@@ -72,12 +72,12 @@ const (
 
 	// Invite Queries
 	QueryCreateInvite = `
-		INSERT INTO "Invite" (id, title, description, location, "eventDate", "senderId", "circleId", "isVaultUnlocked", "vaultUnlockDate", "createdAt", "updatedAt")
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		INSERT INTO "Invite" (id, title, description, location, map_link, "eventDate", "senderId", "circleId", "isVaultUnlocked", "vaultUnlockDate", "createdAt", "updatedAt")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 	QueryListInvites = `
 		SELECT DISTINCT
-			i.id, i.title, i.description, i.location, i."eventDate", i."senderId", i."circleId", i."isVaultUnlocked", i."vaultUnlockDate", i."createdAt", i."updatedAt",
+			i.id, i.title, i.description, i.location, i.map_link, i."eventDate", i."senderId", i."circleId", i."isVaultUnlocked", i."vaultUnlockDate", i."createdAt", i."updatedAt",
 			sender.id as sender_id, sender.name as sender_name, sender.email as sender_email, sender.image as sender_image,
 			circle.id as circle_id, circle.name as circle_name,
 			(SELECT count(*)::int FROM "RSVP" WHERE "inviteId" = i.id) as rsvp_count
@@ -94,6 +94,11 @@ const (
 	QueryUpdateVaultStatus = `
 		UPDATE "Invite" 
 		SET "isVaultUnlocked" = $2, "vaultUnlockDate" = $3, "updatedAt" = NOW() 
+		WHERE id = $1
+	`
+	QueryUpdateInvite = `
+		UPDATE "Invite"
+		SET location = $2, map_link = $3, "updatedAt" = NOW()
 		WHERE id = $1
 	`
 	QueryUpsertRSVP = `

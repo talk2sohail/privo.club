@@ -23,8 +23,13 @@ func (r *inviteRepository) UpdateVaultStatus(ctx context.Context, inviteID strin
 	return err
 }
 
+func (r *inviteRepository) UpdateInvite(ctx context.Context, inviteID string, location, mapLink *string) error {
+	_, err := r.db.ExecContext(ctx, QueryUpdateInvite, inviteID, location, mapLink)
+	return err
+}
+
 func (r *inviteRepository) CreateInvite(ctx context.Context, invite *models.Invite) error {
-	_, err := r.db.ExecContext(ctx, QueryCreateInvite, invite.ID, invite.Title, invite.Description, invite.Location, invite.EventDate, invite.SenderID, invite.CircleID, invite.IsVaultUnlocked, invite.VaultUnlockDate, invite.CreatedAt, invite.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, QueryCreateInvite, invite.ID, invite.Title, invite.Description, invite.Location, invite.MapLink, invite.EventDate, invite.SenderID, invite.CircleID, invite.IsVaultUnlocked, invite.VaultUnlockDate, invite.CreatedAt, invite.UpdatedAt)
 	return err
 }
 

@@ -27,6 +27,7 @@ func (h *InvitesHandler) RegisterRoutes(r chi.Router) {
 	r.Method("GET", "/", api.Handler(h.ListInvites))
 	r.Method("GET", "/{id}", api.Handler(h.GetInvite))
 	r.Method("POST", "/{id}/rsvp", api.Handler(h.RespondToRSVP))
+	r.Method("PATCH", "/{id}", api.Handler(h.UpdateInvite))
 	r.Method("DELETE", "/{id}", api.Handler(h.DeleteInvite))
 }
 
@@ -57,6 +58,7 @@ func (h *InvitesHandler) CreateInvite(w http.ResponseWriter, r *http.Request) er
 		Title:       req.Title,
 		Description: req.Description,
 		Location:    req.Location,
+		MapLink:     req.MapLink,
 		EventDate:   req.EventDate,
 		SenderID:    userID,
 		CircleID:    req.CircleID,
@@ -184,4 +186,40 @@ func (h *InvitesHandler) GetInvite(w http.ResponseWriter, r *http.Request) error
 
 	w.Header().Set("Content-Type", "application/json")
 	return json.NewEncoder(w).Encode(details)
+}
+
+func (h *InvitesHandler) UpdateInvite(w http.ResponseWriter, r *http.Request) error {
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		return api.ErrUnauthorized("Unauthorized")
+	}
+
+	inviteID := chi.URLParam(r, "id")
+	if inviteID == "" {
+		return api.ErrBadRequest("Invite ID required")
+	}
+
+	senderID, err := h.Repo.GetSenderID(r.Context(), inviteID)
+	if err != nil {
+		return api.ErrNotFound("Invite not found")
+	}
+
+	if senderID != userID {
+		return api.ErrForbidden("Only the host can update invite details")
+	}
+
+	var req struct {
+		Location *string `json:"location"`
+		MapLink  *string `json:"mapLink"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return api.ErrBadRequest("Invalid request body")
+	}
+
+	if err := h.Repo.UpdateInvite(r.Context(), inviteID, req.Location, req.MapLink); err != nil {
+		return api.ErrInternal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	return json.NewEncoder(w).Encode(map[string]bool{"success": true})
 }
